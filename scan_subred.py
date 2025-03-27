@@ -23,12 +23,10 @@ def scan_red_pasivo(interface):
             match_ipv6 = patron_ipv6.search(linea)
 
             if match_ipv4:
-                ip, mac = match_ipv4.groups()
-                dispositivos.add((ip, mac))
+                dispositivos.add((match_ipv4.group(1), match_ipv4.group(2)))
             
             if match_ipv6:
-                ip, mac = match_ipv6.groups()
-                dispositivos.add((ip, mac))
+                dispositivos.add((match_ipv6.group(1), match_ipv6.group(3)))
 
 
         return list(dispositivos)
