@@ -29,7 +29,7 @@ def scan_red_pasivo(interface):
         return []
 
 # Definir la interfaz de red
-INTERFAZ_KALI = "eth0"  # Cambia esto si usas otra interfaz
+INTERFAZ_KALI = "eth1"  # Cambia esto si usas otra interfaz
 
 # Ejecutar escaneo pasivo
 dispositivos = scan_red_pasivo(INTERFAZ_KALI)
