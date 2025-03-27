@@ -1,34 +1,43 @@
 import subprocess
 import re
 
-def scan_subred(interface):
+def scan_red_pasivo(interface):
     try:
-       # Ejecutar bettercap en modo no interactivo
-        comando = f"sudo bettercap -iface {interface} -eval 'net.probe on; sleep 5; net.show; exit'"
-        print(comando)
-        resultado = subprocess.run(comando, shell=True, capture_output=True, text=True)
-        #print(resultado)
-        print(resultado.stdout)
-        # Expresión regular para extraer IPs y MACs
-        dispositivos = re.findall(r"(\d+\.\d+\.\d+\.\d+)\s*\│\s*([0-9A-Fa-f:]{17})", resultado.stdout)
-        print(dispositivos)
+        # Ejecutar bettercap en modo pasivo
+        comando = f"sudo bettercap -iface {interface} -eval 'net.sniff on'"
+        print(f"Ejecutando: {comando}")
 
-        return dispositivos
+        # Iniciar el proceso y capturar la salida en tiempo real
+        proceso = subprocess.Popen(comando, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+
+        dispositivos = set()  # Evitar duplicados
+
+        # Leer la salida en tiempo real
+        for linea in proceso.stdout:
+            print(linea.strip())  # Mostrar la salida en vivo
+
+            # Expresión regular para extraer IPs y MACs
+            match = re.search(r"(\d+\.\d+\.\d+\.\d+).*?([0-9A-Fa-f:]{17})", linea)
+            if match:
+                ip, mac = match.groups()
+                dispositivos.add((ip, mac))
+
+        return list(dispositivos)
+    
     except Exception as e:
         print("Error ejecutando Bettercap:", e)
         return []
 
-# Configura la interfaz de red de la VM (ajusta según tu sistema)
-INTERFAZ_VM = "vboxnet0"
+# Definir la interfaz de red
+INTERFAZ_KALI = "eth0"  # Cambia esto si usas otra interfaz
 
-# Ejecuta el escaneo
-dispositivos = scan_subred(INTERFAZ_VM)
-print(dispositivos)
+# Ejecutar escaneo pasivo
+dispositivos = scan_red_pasivo(INTERFAZ_KALI)
 
-# Muestra los resultados
+# Mostrar los dispositivos detectados
 if dispositivos:
-    print("Dispositivos encontrados:")
+    print("\nDispositivos detectados:")
     for ip, mac in dispositivos:
         print(f"IP: {ip}, MAC: {mac}")
 else:
-    print("No se encontraron dispositivos en la subred.")
+    print("\nNo se capturaron dispositivos en la red.")
