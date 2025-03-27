@@ -12,15 +12,24 @@ def scan_red_pasivo(interface):
 
         dispositivos = set()  # Evitar duplicados
 
+        patron_ipv4 = re.compile(r"(\d+\.\d+\.\d+\.\d+).*?([0-9A-Fa-f:]{17})")
+        patron_ipv6 = re.compile(r"(([a-fA-F0-9:]+:+)+[a-fA-F0-9]+).*?([0-9A-Fa-f:]{17})")
+
         # Leer la salida en tiempo real
         for linea in proceso.stdout:
             print(linea.strip())  # Mostrar la salida en vivo
 
-            # Expresión regular para extraer IPs y MACs
-            match = re.search(r"(\d+\.\d+\.\d+\.\d+).*?([0-9A-Fa-f:]{17})", linea)
-            if match:
-                ip, mac = match.groups()
+            match_ipv4 = patron_ipv4.search(linea)
+            match_ipv6 = patron_ipv6.search(linea)
+
+            if match_ipv4:
+                ip, mac = match_ipv4.groups()
                 dispositivos.add((ip, mac))
+            
+            if match_ipv6:
+                ip, mac = match_ipv6.groups()
+                dispositivos.add((ip, mac))
+
 
         return list(dispositivos)
     
