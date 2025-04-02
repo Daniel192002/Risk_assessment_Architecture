@@ -9,11 +9,6 @@ class AssetController:
         try:
             command = "f sudo bettercap -iface {interface} -eval 'net.recon on; sleep 5; net.show; net.recon off'"
             process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-            for linea in iter(process.stdout.readline, ""):
-                print(linea.strip())  # Muestra cada línea en tiempo real
-        
-            process.stdout.close()
-            process.wait()
             exit, _ = process.communicate()
             return exit
         except Exception as e:
@@ -64,20 +59,20 @@ class AssetController:
         time.sleep(3)
 
         # Escaneo IPv6 con ip -6 neigh show
-        print("[+] Escaneando direcciones IPv6...")
-        salida_ipv6 = AssetController.ejecutar_comando("ip -6 neigh show dev eth1")
-        dispositivos_ipv6 = AssetController.extraer_dispositivos_ipv6(salida_ipv6)
+        # print("[+] Escaneando direcciones IPv6...")
+        # salida_ipv6 = AssetController.ejecutar_comando("ip -6 neigh show dev eth1")
+        # dispositivos_ipv6 = AssetController.extraer_dispositivos_ipv6(salida_ipv6)
 
         # Unir resultados basados en la MAC
         activos = {}
         for ip, mac in dispositivos_ipv4:
             activos[mac] = {"IPv4": ip, "IPv6": None}
 
-        for ip, mac in dispositivos_ipv6:
-            if mac in activos:
-                activos[mac]["IPv6"] = ip
-            else:
-                activos[mac] = {"IPv4": None, "IPv6": ip}
+        # for ip, mac in dispositivos_ipv6:
+        #     if mac in activos:
+        #         activos[mac]["IPv6"] = ip
+        #     else:
+        #         activos[mac] = {"IPv4": None, "IPv6": ip}
 
         # Mostrar resultados
         print("\n[+] Dispositivos detectados:")
