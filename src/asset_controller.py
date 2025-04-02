@@ -60,7 +60,7 @@ class AssetController:
 
         # Escaneo IPv6 con ip -6 neigh show
         print("[+] Escaneando direcciones IPv6...")
-        salida_ipv6 = AssetController.ejecutar_comando("ip -6 neigh show")
+        salida_ipv6 = AssetController.ejecutar_comando("ip -6 neigh show dev eth1")
         dispositivos_ipv6 = AssetController.extraer_dispositivos_ipv6(salida_ipv6)
 
         # Unir resultados basados en la MAC
