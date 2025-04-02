@@ -9,6 +9,11 @@ class AssetController:
         try:
             command = "f sudo bettercap -iface {interface} -eval 'net.recon on; sleep 5; net.show; net.recon off'"
             process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            for linea in iter(process.stdout.readline, ""):
+                print(linea.strip())  # Muestra cada línea en tiempo real
+        
+            process.stdout.close()
+            process.wait()
             exit, _ = process.communicate()
             return exit
         except Exception as e:
