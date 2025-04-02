@@ -9,9 +9,9 @@ class AssetController:
         try:
             command = "f sudo bettercap -iface {interface} -eval 'net.sniff on'"
             process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-            print(process)
+            for linea in process.stdout:
+                print(linea.strip())
             exit, _ = process.communicate()
-            print(exit)
             return exit
         except Exception as e:
             print("Error ejecutando Bettercap:", e)
