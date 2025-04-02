@@ -7,7 +7,7 @@ class AssetController:
     def execute_bettercap(interface):
         """Ejecutar bettercap para obtener direcciones IPV4 y MACs."""
         try:
-            command = "f sudo bettercap -iface {interface} -eval 'net.recon on; sleep 5; net.recon off'"
+            command = "f sudo bettercap -iface {interface} -eval 'net.recon on; sleep 5; net.show; net.recon off'"
             process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
             exit, _ = process.communicate()
             return exit
