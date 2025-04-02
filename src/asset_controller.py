@@ -11,6 +11,7 @@ class AssetController:
             process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
             print(process)
             exit, _ = process.communicate()
+            print(exit)
             return exit
         except Exception as e:
             print("Error ejecutando Bettercap:", e)
@@ -54,6 +55,7 @@ class AssetController:
         # Escaneo IPv4 con Bettercap
         print("[+] Escaneando direcciones IPv4...")
         salida_ipv4 = AssetController.execute_bettercap(interface)
+        print(salida_ipv4);
         dispositivos_ipv4 = AssetController.extraer_dispositivos_ipv4(salida_ipv4)
 
         # Esperar antes del siguiente escaneo
