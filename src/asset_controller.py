@@ -52,7 +52,7 @@ class AssetController:
 
         # Escaneo IPv4 con Bettercap
         print("[+] Escaneando direcciones IPv4...")
-        salida_ipv4 = AssetController.ejecutar_bettercap(interface)
+        salida_ipv4 = AssetController.execute_bettercap(interface)
         dispositivos_ipv4 = AssetController.extraer_dispositivos_ipv4(salida_ipv4)
 
         # Esperar antes del siguiente escaneo
