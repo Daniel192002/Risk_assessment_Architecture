@@ -9,6 +9,7 @@ class AssetController:
         try:
             command = "f sudo bettercap -iface {interface} -eval 'net.sniff on'"
             process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            print(process)
             exit, _ = process.communicate()
             return exit
         except Exception as e:
