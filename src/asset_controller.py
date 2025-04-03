@@ -27,7 +27,7 @@ class AssetController:
         return devices
 
     @staticmethod
-    def scan_network(interface):
+    def scan_red_pasivo(interface):
         print("[+] Iniciando escaneo de red...")
 
         # Escaneo IPv4 con Bettercap
