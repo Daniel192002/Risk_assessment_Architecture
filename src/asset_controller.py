@@ -82,3 +82,4 @@ class AssetController:
         for mac, info in active_devices.items():
             print(f"{mac}\t{info['IPv4']}\t{info['IPv6']}")
         
+        return active_devices
