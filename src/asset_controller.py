@@ -41,7 +41,7 @@ class AssetController:
     def extract_ipv6_devices(output):
         """Extrae direcciones IPv6 y MACs de la salida del comando ip -6 neigh show."""
         devices = set()
-        ipv6_pattern = re.compile(r"([a-fA-F0-9:]+) +\w+ +([0-9A-Fa-f:]{17})")
+        ipv6_pattern = re.compile(r"([a-fA-F0-9:]+)\s+dev\s+\S+\s+lladdr\s+([0-9A-Fa-f:]{17})")
         for line in output.split("\n"):
             match = ipv6_pattern.search(line)
             if match:
