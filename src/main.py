@@ -4,7 +4,8 @@ INTERFAZ_KALI = "eth1"
 
 if __name__ == "__main__":
     dispositivos = AssetController.scan_network(INTERFAZ_KALI)
-
+    print("\n[DEBUG] Salida de IPv6:")
+    print(dispositivos)
     if dispositivos:
         print("\nDispositivos detectados:")
         for mac, datos in dispositivos.items():
