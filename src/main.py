@@ -3,7 +3,7 @@ from asset_controller import AssetController
 INTERFAZ_KALI = "eth1"
 
 if __name__ == "__main__":
-    dispositivos = AssetController.scan_red_pasivo(INTERFAZ_KALI)
+    dispositivos = AssetController.scan_network(INTERFAZ_KALI)
 
     if dispositivos:
         print("\nDispositivos detectados:")
