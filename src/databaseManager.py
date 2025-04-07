@@ -6,9 +6,9 @@ class DatabaseManager:
         try:
             self.conn = mariadb.connect(
                 user = user,
-                password = password;
-                host = host;
-                port = 3306;
+                password = password,
+                host = host,
+                port = 3306,
                 database = database
             )
             self.cursor = self.conn.cursor()
