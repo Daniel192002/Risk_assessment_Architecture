@@ -1,6 +1,7 @@
 import subprocess
 import re
 import time
+import databaseManager
 
 class AssetController:
     @staticmethod
@@ -79,7 +80,11 @@ class AssetController:
         print("\n[+] Dispositivos detectados:")
         print("MAC Address\t\tIPv4\t\tIPv6")
         print("-" * 50)
+        db = databaseManager.DatabaseManager(user="root", password="tfg2025", host="localhost")
+        
         for mac, info in active_devices.items():
-            print(f"{mac}\t{info['IPv4']}\t{info['IPv6']}")
+            db.insert_device(mac, info["IPv4"], info["IPv6"])
+        
+        db.close
         
         return active_devices
