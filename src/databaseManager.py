@@ -19,7 +19,7 @@ class DatabaseManager:
     def insert_device(self, mac, ipv4, ipv6):
         try:
             self.cursor.execute(
-                "INSERT INTO dispositivos (mac, ipv4, ipv6) VALUES (?, ?, ?)",
+                "INSERT INTO assets (mac, ipv4, ipv6) VALUES (?, ?, ?)",
                 (mac, ipv4, ipv6)
             )
             self.conn.commit()
