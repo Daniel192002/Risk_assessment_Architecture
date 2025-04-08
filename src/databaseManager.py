@@ -2,7 +2,7 @@ import mariadb
 
 class DatabaseManager:
     
-    def __init__(self, host="localhost", user="root", password="", database="red_activa"):
+    def __init__(self, host="localhost", user="root", password="", database="identified_assets"):
         try:
             self.conn = mariadb.connect(
                 user = user,
