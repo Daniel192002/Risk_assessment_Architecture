@@ -12,7 +12,7 @@ if __name__ == "__main__":
     print("Primer Comando:")
     print (output)
     
-    time.sleep(5)
+    time.sleep(2)
     
     command = f"ping -c 4 192.168.1.4"
     process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
