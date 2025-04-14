@@ -25,6 +25,11 @@ class DatabaseManager:
             self.conn.commit()
         except mariadb.Error as e:
              print(f"Error insertando datos: {e}")
+    
+    def get_devices(self):
+        query = "SELECT mac, ipv4, ipv6 FROM assets"
+        self.cursor.execute(query)
+        return self.cursor.fetchall()
 
     def close(self):
         if self.conn:
