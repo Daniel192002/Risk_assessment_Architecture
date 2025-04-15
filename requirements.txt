@@ -1,3 +1,10 @@
+bcrypt==4.3.0
+cffi==1.17.1
+cryptography==44.0.2
+lxml==5.3.2
 mariadb==1.1.12
+packaging==24.2
+paramiko==3.5.1
+pycparser==2.22
+PyNaCl==1.5.0
 python-gvm==26.1.1
-packaging==20.9
