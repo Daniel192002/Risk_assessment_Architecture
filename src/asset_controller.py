@@ -80,7 +80,7 @@ class AssetController:
         print("\n[+] Dispositivos detectados:")
         print("MAC Address\t\tIPv4\t\tIPv6")
         print("-" * 50)
-        db = databaseManager.DatabaseManager(user="root", password="tfg2025", host="172.18.0.2")
+        db = databaseManager.DatabaseManager(user="root", password="tfg2025", host="127.0.0.1")
         
         for mac, info in active_devices.items():
             db.insert_device(mac, info["IPv4"], info["IPv6"])
