@@ -83,7 +83,7 @@ class AssetController:
         db = databaseManager.DatabaseManager(user="root", password="tfg2025", host="127.0.0.1")
         devices = db.get_devices()
         for mac, info in active_devices.items():
-            ipv4 = info["Ipv4"]
+            ipv4 = info["IPv4"]
             ipv6 = info["IPv6"]
             device_exitance = any(mac == e[0] and ipv4 == e[1] and ipv6 == e[2] for e in devices)
             
