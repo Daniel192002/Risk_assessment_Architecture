@@ -1,10 +1,10 @@
 from asset_controller import AssetController
 from vulnerabilityScanner import VulnerabilityScanner
 
-INTERFAZ_KALI = "eth1"
+INTERFAZ = "enp0s8"
 
 if __name__ == "__main__":
-    dispositivos = AssetController.scan_network(INTERFAZ_KALI)
+    dispositivos = AssetController.scan_network(INTERFAZ)
     print("\n[DEBUG] Salida de IPv6:")
     print(dispositivos)
     if dispositivos:
