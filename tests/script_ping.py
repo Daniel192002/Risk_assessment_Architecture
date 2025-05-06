@@ -22,6 +22,7 @@ if __name__ == "__main__":
       output, _ = process.communicate()
       print(f"Ping a {ip}:")
       print (output)
+      time.sleep(2)
 
 
     time.sleep(INTERVALO)
