@@ -14,10 +14,14 @@ if __name__ == "__main__":
     
     time.sleep(2)
     
-    command = f"ping -c 4 192.168.1.4"
-    process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-    output, _ = process.communicate()
-    print("Segundo comando:")
-    print (output)
+    ips = ["192.168.1.4", "192.168.1.8"]
+    
+    for ip in ips:
+      command = f"ping -c 4 {ip}"
+      process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+      output, _ = process.communicate()
+      print(f"Ping a {ip}:")
+      print (output)
+
 
     time.sleep(INTERVALO)
