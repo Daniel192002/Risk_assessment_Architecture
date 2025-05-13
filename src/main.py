@@ -1,7 +1,7 @@
 from asset_controller import AssetController
 from vulnerabilityScanner import VulnerabilityScanner
 
-INTERFAZ = "enp0s8"
+INTERFAZ = "eth1"
 
 if __name__ == "__main__":
     dispositivos = AssetController.scan_network(INTERFAZ)
