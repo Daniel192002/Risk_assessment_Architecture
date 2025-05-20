@@ -25,7 +25,7 @@ LINDDUN_CATEGORIES = {
 
 class ExternalThreatDB:
     def __init__(self):
-        self.api_url = "https://services.nvd.nist.gov/rest/json/cve/1.0/"
+        self.api_url = "https://services.nvd.nist.gov/rest/json/cve/2.0?cveId="
         self.headers = {"User-Agent": "Mozilla/5.0"}
     
     def get_cve_description(self, cve_id):
