@@ -33,6 +33,7 @@ class RiskController:
             ipv4 = addrs["IPv4"]
             if ipv4:
                 cves = self.vulnerability_scanner.scan(ipv4)
+                print(f"[+] CVES: {cves}")
                 for cve, severity in cves:
                     if not self.db.cve_exists(ipv4, cve):
                         self.db.insert_vulnerability(ipv4, cve, severity)
