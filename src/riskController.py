@@ -29,24 +29,24 @@ class RiskController:
                 print(f"[-] Dispositivo ya existente (ignorando): {mac} - IPv4: {ipv4} - IPv6: {ipv6}")
         
         #ESCANEO DE VULNERABILIDADES
-        # for device in existing_devices:
-        #     mac = device[0]
-        #     ip = device[1]
-        #     if ip:
-        #         cves = self.vulnerability_scanner.scan(ip)
-        #         print(f"[+] CVES: {cves}")
-        #         for cve, severity in cves:
-        #             if not self.db.cve_exists(ip, cve):
-        #                 self.db.insert_vulnerability(mac, ip, cve, severity)
-        #                 print(f"[+] Vulnerabilidad detectada: {cve} en {ip}")
-        #             else:
-        #                 print(f"[-] Vulnerabilidad ya registrada (ignorando): {cve} en {ip}")
+        for device in existing_devices:
+            mac = device[0]
+            ip = device[1]
+            if ip:
+                cves = self.vulnerability_scanner.scan(ip)
+                print(f"[+] CVES: {cves}")
+                for cve, severity in cves:
+                    if not self.db.cve_exists(ip, cve):
+                        self.db.insert_vulnerability(mac, ip, cve, severity)
+                        print(f"[+] Vulnerabilidad detectada: {cve} en {ip}")
+                    else:
+                        print(f"[-] Vulnerabilidad ya registrada (ignorando): {cve} en {ip}")
         
         
         #Buscar y clasificar vulnerabilidades
      
-        cves = self.db.get_vulnerabilities()
-        threads_classified = self.threat_db.classify_threats(cves)
-        print(f"[+] Amenazas clasificadas: {threads_classified}")
+        # cves = self.db.get_vulnerabilities()
+        # threads_classified = self.threat_db.classify_threats(cves)
+        # print(f"[+] Amenazas clasificadas: {threads_classified}")
 
         self.db.close()
