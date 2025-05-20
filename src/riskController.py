@@ -32,7 +32,6 @@ class RiskController:
         for device in existing_devices:
             mac = device[0]
             ip = device[1]
-            print(f"[+] Dispositivo nuevo detectado: {mac} - IPv4: {ip}")
             if ip:
                 cves = self.vulnerability_scanner.scan(ip)
                 print(f"[+] CVES: {cves}")
