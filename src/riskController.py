@@ -33,15 +33,15 @@ class RiskController:
             mac = device[0]
             ip = device[1]
             print(f"[+] Dispositivo nuevo detectado: {mac} - IPv4: {ip}")
-            # if ip:
-            #     cves = self.vulnerability_scanner.scan(ip)
-            #     print(f"[+] CVES: {cves}")
-            #     for cve, severity in cves:
-            #         if not self.db.cve_exists(ipv4, cve):
-            #             self.db.insert_vulnerability(ipv4, cve, severity)
-            #             print(f"[+] Vulnerabilidad detectada: {cve} en {ipv4}")
-            #         else:
-            #             print(f"[-] Vulnerabilidad ya registrada (ignorando): {cve} en {ipv4}")
+            if ip:
+                cves = self.vulnerability_scanner.scan(ip)
+                print(f"[+] CVES: {cves}")
+                for cve, severity in cves:
+                    if not self.db.cve_exists(ipv4, cve):
+                        self.db.insert_vulnerability(ipv4, cve, severity)
+                        print(f"[+] Vulnerabilidad detectada: {cve} en {ipv4}")
+                    else:
+                        print(f"[-] Vulnerabilidad ya registrada (ignorando): {cve} en {ipv4}")
         
         
         #Buscar y clasificar vulnerabilidades
