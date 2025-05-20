@@ -51,12 +51,13 @@ class ExternalThreatDB:
         classified = []
         cve_ids = cves
         
-        for cve_id in cve_ids:
+        for ipv4, cve_id in cve_ids:
             try:
                 description = self.get_cve_description(cve_id)
                 stride_categorie = self.classify_cve(description, STRIDE_CATEGORIES)
                 linddun_categorie = self.classify_cve(description, LINDDUN_CATEGORIES)
                 classified.append({
+                    "ipv4": ipv4,
                     "cve_id": cve_id,
                     "description": description,
                     "STRIDE": stride_categorie,

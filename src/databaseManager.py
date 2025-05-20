@@ -27,15 +27,17 @@ class DatabaseManager:
              print(f"Error insertando datos: {e}")
     
     def get_devices(self):
+        cursor = self.conn.cursor()
         query = "SELECT mac, ipv4, ipv6 FROM assets"
-        self.cursor.execute(query)
-        return self.cursor.fetchall()
+        cursor.execute(query)
+        return cursor.fetchall()
     
     def get_vulnerabilities(self):
         cursor = self.conn.cursor()
         query = "SELECT ipv4, cve FROM vulnerabilities"
         cursor.execute(query)
-        return [row[0] for row in cursor.fetchall()]
+        return cursor.fetchall()
+    
     def insert_vulnerability(self, ipv4, cve, severity):
         try:
             cursor = self.conn.cursor()
