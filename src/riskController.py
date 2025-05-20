@@ -36,11 +36,11 @@ class RiskController:
                 cves = self.vulnerability_scanner.scan(ip)
                 print(f"[+] CVES: {cves}")
                 for cve, severity in cves:
-                    if not self.db.cve_exists(ipv4, cve):
-                        self.db.insert_vulnerability(ipv4, cve, severity)
-                        print(f"[+] Vulnerabilidad detectada: {cve} en {ipv4}")
+                    if not self.db.cve_exists(ip, cve):
+                        self.db.insert_vulnerability(ip, cve, severity)
+                        print(f"[+] Vulnerabilidad detectada: {cve} en {ip}")
                     else:
-                        print(f"[-] Vulnerabilidad ya registrada (ignorando): {cve} en {ipv4}")
+                        print(f"[-] Vulnerabilidad ya registrada (ignorando): {cve} en {ip}")
         
         
         #Buscar y clasificar vulnerabilidades
