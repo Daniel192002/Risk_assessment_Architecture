@@ -34,6 +34,7 @@ class ExternalThreatDB:
         response = requests.get(url, headers=headers, timeout=10)
         if response.status_code == 200:
             data = response.json()
+            print(f"[DEBUG] Este es la data: {data}")
             try:
                 return data["result"]["CVE_Items"][0]["cve"]["description"]["description_data"][0]["value"]
             except (IndexError, KeyError):
