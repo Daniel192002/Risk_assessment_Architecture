@@ -25,19 +25,24 @@ LINDDUN_CATEGORIES = {
 }
 
 class ExternalThreatDB:
-    # def __init__(self, api_key=None):
-    #     # self.api_url = "https://services.nvd.nist.gov/rest/json/cve/2.0?cveId="
-    #     # self.headers = {"User-Agent": "Mozilla/5.0"}
-    #     self.api_key = '5ad9e6cf-d9a1-4c51-b8cc-c9f8d096757f'
-    #     if api_key:
-    #         nvdlib.api_key = api_key
+    def __init__(self, api_key=None):
+        self.api_key = '5ad9e6cf-d9a1-4c51-b8cc-c9f8d096757f'
+        self.api_url = "https://services.nvd.nist.gov/rest/json/cve/2.0"
+        self.headers = {"apiKey": self.api_key, "User-Agent": "Mozilla/5.0"}
+
     
     def get_cve_description(self, cve_id):
         try:
-            results = nvdlib.searchCVE(cve_id, verbose=True)[0]
-            print(f"Este es el resultado: {results}")
-            if results:
-                return results.descriptions[0].value
+            url = f"{self.api_url}?cveId={cve_id}"
+            response = requests.get(url, headers=self.headers)
+            if response.status_code == 200:
+                data = response.json()
+                descriptions = data.get("vulnerabilities", [])[0]["cve"]["descriptions"]
+                for desc in descriptions:
+                    if desc["lang"] == "en":
+                        return desc["value"]
+            else:
+                print(f"HTTP error: {response.status_code}")
         except Exception as e:
             print(f"Error al obtener la descripción de CVE {cve_id}: {e}")
         return None
