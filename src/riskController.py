@@ -45,8 +45,8 @@ class RiskController:
         
         #Buscar y clasificar vulnerabilidades
      
-        # cves = self.db.get_vulnerabilities()
-        # threads_classified = self.threat_db.classify_threats(cves)
-        # print(f"[+] Amenazas clasificadas: {threads_classified}")
+        cves = self.db.get_vulnerabilities()
+        threads_classified = self.threat_db.classify_threats(cves)
+        print(f"[+] Amenazas clasificadas: {threads_classified}")
 
         self.db.close()
