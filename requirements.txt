@@ -23,6 +23,7 @@ MarkupSafe==3.0.2
 mdurl==0.1.2
 murmurhash==1.0.12
 numpy==2.2.6
+nvdlib==0.7.7
 packaging==24.2
 paramiko==3.5.1
 preshed==3.0.9

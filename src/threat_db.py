@@ -1,6 +1,7 @@
 
 import requests
 import spacy
+import nvdlib
 
 nlp = spacy.load("en_core_web_sm")
 
@@ -24,24 +25,20 @@ LINDDUN_CATEGORIES = {
 }
 
 class ExternalThreatDB:
-    def __init__(self):
-        self.api_url = "https://services.nvd.nist.gov/rest/json/cve/2.0?cveId="
-        self.headers = {"User-Agent": "Mozilla/5.0"}
+    def __init__(self, api_key=None):
+        # self.api_url = "https://services.nvd.nist.gov/rest/json/cve/2.0?cveId="
+        # self.headers = {"User-Agent": "Mozilla/5.0"}
+        self.api_key = '5ad9e6cf-d9a1-4c51-b8cc-c9f8d096757f'
+        if api_key:
+            nvdlib.api_key = api_key
     
     def get_cve_description(self, cve_id):
-        url = f"{self.api_url}{cve_id}"
-        headers = self.headers
-        response = requests.get(url, headers=headers, timeout=10)
-        if response.status_code == 200:
-            data = response.json()
-            print(f"[DEBUG] Este es la data: {data}")
-            try:
-                return data["result"]["CVE_Items"][0]["cve"]["description"]["description_data"][0]["value"]
-            except (IndexError, KeyError):
-                print(f"[!] Error al extraer la descripcion de CVE {cve_id}: {data}")
-            
-        else:
-            print(f"[!] Error {response.status_code} al acceder a {url}")
+        try:
+            results = nvdlib.searchCVE(cve_id, verbose=True)
+            if results:
+                return results[0].description.value
+        except Exception as e:
+            print(f"Error al obtener la descripción de CVE {cve_id}: {e}")
         return None
 
     def classify_cve(self, description, keywords):
