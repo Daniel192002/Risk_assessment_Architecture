@@ -48,7 +48,7 @@ class ExternalThreatDB:
         return list(categories_found)
     
     def classify_threat(self,ipv4,cve_id):
-        classified = None
+        classified = []
         try:
             description, vector = self.get_cve_description(cve_id)
             stride_categorie = self.classify_cve(description, STRIDE_CATEGORIES)

@@ -49,7 +49,7 @@ class RiskController:
         for ipv4, cve in cves:
             if not self.db.cve_classified_exists(ipv4, cve):
                 thread_classified = self.threat_db.classify_threat(ipv4, cve)
-                thread = thread_classified
+                thread = thread_classified[0]
                 description = thread["description"]
                 cvss_vector = thread["cvss_vector"]
                 stride = thread["STRIDE"]
