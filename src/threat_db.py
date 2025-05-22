@@ -33,11 +33,11 @@ class ExternalThreatDB:
             print(f"CVE: {cve}")
             description = cve.descriptions[0].value
             if 'cvssMetricV31' in cve:
-                vector = cve['cvssMetricV31'][0]['cvssData']['vectorString']    
+                vector = cve.metrics.cvssMetricV31[0].cvssData.vectorString  
             elif 'cvssMetricV3' in cve:
-                vector = cve['cvssMetricV3'][0]['cvssData']['vectorString']
+                vector = cve.metrics.cvssMetricV3[0].cvssData.vectorString 
             elif 'cvssMetricV2' in cve:
-                vector = cve['cvssMetricV2'][0]['cvssData']['vectorString']
+                vector = cve.metrics.cvssMetricV2[0].cvssData.vectorString 
         except IndexError:
             print(f"Error: CVE {cve_id} not found.")
             return None
