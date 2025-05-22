@@ -32,7 +32,9 @@ class ExternalThreatDB:
             cve = nvdlib.searchCVE(cveId=cve_id, verbose=True)[0]
             print(f"CVE: {cve}")
             description = cve.descriptions[0].value
-            vector = cve.cvssData.vectorString
+            vector = None
+            if hasattr(cve, 'cvssData') and cve.cvssData:
+                vector = getattr(cve.cvssData, 'vectorString', None)
         except IndexError:
             print(f"Error: CVE {cve_id} not found.")
             return None
