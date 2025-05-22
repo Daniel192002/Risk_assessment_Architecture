@@ -33,8 +33,9 @@ class ExternalThreatDB:
             if not cve:
                 print(f"Error: CVE {cve_id} not found.")
                 return None, None
-            # print(f"CVE: {cve}")
+            print(f"CVE: {cve}")
             description = cve.descriptions[0].value
+            vector = "N/A"
             metrics = getattr(cve, 'metrics', {})
             # nvdlib puede devolver un objeto, adaptamos acceso:
             if hasattr(metrics, 'cvssMetricV31') and metrics.cvssMetricV31:
