@@ -32,6 +32,7 @@ class ExternalThreatDB:
             cve = nvdlib.searchCVE(cveId=cve_id, verbose=True)[0]
             print(f"CVE: {cve}")
             description = cve.descriptions[0].value
+            vector = None
             if 'cvssMetricV31' in cve:
                 vector = cve.metrics.cvssMetricV31[0].cvssData.vectorString  
             elif 'cvssMetricV3' in cve:
