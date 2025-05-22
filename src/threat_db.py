@@ -39,10 +39,12 @@ class ExternalThreatDB:
                 vector = cve.metrics.cvssMetricV3[0].cvssData.vectorString 
             elif 'cvssMetricV2' in cve:
                 vector = cve.metrics.cvssMetricV2[0].cvssData.vectorString 
+            
+            return description, vector   
         except IndexError:
             print(f"Error: CVE {cve_id} not found.")
             return None
-        return description, vector    
+         
     
     def classify_cve(self, description, keywords):
         doc = nlp(description.lower())
