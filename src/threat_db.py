@@ -25,16 +25,12 @@ LINDDUN_CATEGORIES = {
 }
 
 class ExternalThreatDB:
-    # def __init__(self, api_key=None):
-    #     self.api_key = '5ad9e6cf-d9a1-4c51-b8cc-c9f8d096757f'
-    #     self.api_url = "https://services.nvd.nist.gov/rest/json/cve/2.0"
-    #     self.headers = {"apiKey": self.api_key, "User-Agent": "Mozilla/5.0"}
-
     
     def get_cve_description(self, cve_id):
         try:
             nvdlib.read_timeout = 60
             cve = nvdlib.searchCVE(cveId=cve_id, verbose=True)[0]
+            print(f"CVE: {cve}")
             description = cve.descriptions[0].value
         except IndexError:
             print(f"Error: CVE {cve_id} not found.")
