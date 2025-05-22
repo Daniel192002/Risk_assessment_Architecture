@@ -48,7 +48,7 @@ class ExternalThreatDB:
         # return None
         try:
             nvdlib.read_timeout = 60
-            cve = nvdlib.searchCVE(cve_id, verbose=True)[0]
+            cve = nvdlib.searchCVE(cveId=cve_id, verbose=True)[0]
         except IndexError:
             print(f"Error: CVE {cve_id} not found.")
             return None
