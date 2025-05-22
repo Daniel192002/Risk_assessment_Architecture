@@ -58,6 +58,6 @@ class RiskController:
             else:
                 print(f"[-] Amenaza ya clasificada (ignorando): {cve} en {ipv4}")
                 continue
-                
+            break;   
         
         self.db.close()
