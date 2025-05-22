@@ -38,7 +38,9 @@ class ExternalThreatDB:
             elif 'cvssMetricV3' in cve:
                 vector = cve.metrics.cvssMetricV3[0].cvssData.vectorString 
             elif 'cvssMetricV2' in cve:
-                vector = cve.metrics.cvssMetricV2[0].cvssData.vectorString 
+                vector = cve.metrics.cvssMetricV2[0].cvssData.vectorString
+                print(f"CVE: {vector}")
+                
             
             return description, vector   
         except IndexError:

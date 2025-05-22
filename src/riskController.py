@@ -53,8 +53,8 @@ class RiskController:
                 cvss_vector = thread["cvss_vector"]
                 stride = thread["STRIDE"]
                 linddun = thread["LINDDUN"]
-                self.db.insert_vul_classified(ipv4,cve,cvss_vector,stride,linddun)
-                print(f"[+] Amenazas clasificadas: {thread_classified}")
+                # self.db.insert_vul_classified(ipv4,cve,cvss_vector,stride,linddun)
+                # print(f"[+] Amenazas clasificadas: {thread_classified}")
             else:
                 print(f"[-] Amenaza ya clasificada (ignorando): {cve} en {ipv4}")
                 continue
