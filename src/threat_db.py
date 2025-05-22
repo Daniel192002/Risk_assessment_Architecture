@@ -30,6 +30,9 @@ class ExternalThreatDB:
         try:
             nvdlib.read_timeout = 60
             cve = nvdlib.searchCVE(cveId=cve_id, verbose=True)[0]
+            if not cve:
+                print(f"Error: CVE {cve_id} not found.")
+                return None, None
             # print(f"CVE: {cve}")
             description = cve.descriptions[0].value
             metrics = getattr(cve, 'metrics', {})
@@ -40,9 +43,7 @@ class ExternalThreatDB:
                 vector = metrics.cvssMetricV3[0].cvssData.vectorString
             elif hasattr(metrics, 'cvssMetricV2') and metrics.cvssMetricV2:
                 vector = metrics.cvssMetricV2[0].cvssData.vectorString
-                print(f"CVE: {vector}")
                 
-            
             return description, vector   
         except IndexError:
             print(f"Error: CVE {cve_id} not found.")
@@ -62,6 +63,9 @@ class ExternalThreatDB:
         classified = []
         try:
             description, vector = self.get_cve_description(cve_id)
+            if description == None and vector == None:
+                classified = None
+                return classified
             stride_categorie = self.classify_cve(description, STRIDE_CATEGORIES)
             linddun_categorie = self.classify_cve(description, LINDDUN_CATEGORIES)
             classified.append({

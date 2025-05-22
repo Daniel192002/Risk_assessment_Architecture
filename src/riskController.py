@@ -49,15 +49,18 @@ class RiskController:
         for ipv4, cve in cves:
             if not self.db.cve_classified_exists(ipv4, cve):
                 thread_classified = self.threat_db.classify_threat(ipv4, cve)
-                thread = thread_classified[0]
-                cvss_vector = thread["cvss_vector"]
-                stride = thread["STRIDE"]
-                linddun = thread["LINDDUN"]
-                # self.db.insert_vul_classified(ipv4,cve,cvss_vector,stride,linddun)
-                # print(f"[+] Amenazas clasificadas: {thread_classified}")
+                if thread_classified == None:
+                    continue;
+                else:
+                    thread = thread_classified[0]
+                    cvss_vector = thread["cvss_vector"]
+                    stride = thread["STRIDE"]
+                    linddun = thread["LINDDUN"]
+                    self.db.insert_vul_classified(ipv4,cve,cvss_vector,stride,linddun)
+                    print(f"[+] Amenazas clasificadas: {thread_classified}")
             else:
                 print(f"[-] Amenaza ya clasificada (ignorando): {cve} en {ipv4}")
                 continue
-            break;   
+  
         
         self.db.close()
