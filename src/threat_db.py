@@ -32,13 +32,14 @@ class ExternalThreatDB:
             cve = nvdlib.searchCVE(cveId=cve_id, verbose=True)[0]
             # print(f"CVE: {cve}")
             description = cve.descriptions[0].value
-            vector = None
-            if 'cvssMetricV31' in cve:
-                vector = cve.metrics.cvssMetricV31[0].cvssData.vectorString  
-            elif 'cvssMetricV3' in cve:
-                vector = cve.metrics.cvssMetricV3[0].cvssData.vectorString 
-            elif 'cvssMetricV2' in cve:
-                vector = cve.metrics.cvssMetricV2[0].cvssData.vectorString
+            metrics = getattr(cve, 'metrics', {})
+            # nvdlib puede devolver un objeto, adaptamos acceso:
+            if hasattr(metrics, 'cvssMetricV31') and metrics.cvssMetricV31:
+                vector = metrics.cvssMetricV31[0].cvssData.vectorString
+            elif hasattr(metrics, 'cvssMetricV3') and metrics.cvssMetricV3:
+                vector = metrics.cvssMetricV3[0].cvssData.vectorString
+            elif hasattr(metrics, 'cvssMetricV2') and metrics.cvssMetricV2:
+                vector = metrics.cvssMetricV2[0].cvssData.vectorString
                 print(f"CVE: {vector}")
                 
             
