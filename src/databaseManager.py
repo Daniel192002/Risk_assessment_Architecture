@@ -50,7 +50,7 @@ class DatabaseManager:
     def insert_vul_classified(self, ipv4, cve, description, cvss_vector, stride, linddun):
         try:
             cursor = self.conn.cursor()
-            query = "INSERT INTO classfied_vulnerabilities (ipv4, cve_id, description, cvss_vector, stride, linddun) VALUES (%s, %s, %s, %s, %s, %s)"
+            query = "INSERT INTO vul_classfied (ipv4, cve_id, description, cvss_vector, stride, linddun) VALUES (%s, %s, %s, %s, %s, %s)"
             cursor.execute(query, (ipv4, cve, description, cvss_vector, stride, linddun))
             self.conn.commit()
         except mariadb.Error as e:
@@ -58,7 +58,7 @@ class DatabaseManager:
     
     def get_classified_vulnerabilities(self):
         cursor = self.conn.cursor()
-        query = "SELECT ipv4, cve_id, cvss_vector, stride, linddun FROM classfied_vulnerabilities"
+        query = "SELECT ipv4, cve_id, cvss_vector, stride, linddun FROM vul_classfied"
         cursor.execute(query)
         return cursor.fetchall()
     
@@ -70,7 +70,7 @@ class DatabaseManager:
     
     def cve_classified_exists(self, ipv4, cve):
         cursor = self.conn.cursor()
-        query = "SELECT 1 FROM classfied_vulnerabilities  WHERE ipv4 = %s AND cve_id = %s LIMIT 1"
+        query = "SELECT 1 FROM vul_classfied WHERE ipv4 = %s AND cve_id = %s LIMIT 1"
         cursor.execute(query, (ipv4, cve))
         return cursor.fetchone() is not None
 
