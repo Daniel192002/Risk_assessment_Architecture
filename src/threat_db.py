@@ -63,7 +63,8 @@ class ExternalThreatDB:
         classified = []
         try:
             description, vector = self.get_cve_description(cve_id)
-            if description == None and vector == None:
+            if description is None or vector is None:
+                print(f"Skipping classification for CVE {cve_id} due to missing data.")
                 classified = None
                 return classified
             stride_categorie = self.classify_cve(description, STRIDE_CATEGORIES)
