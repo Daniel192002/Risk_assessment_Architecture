@@ -32,14 +32,17 @@ class ExternalThreatDB:
             cve = nvdlib.searchCVE(cveId=cve_id, verbose=True)[0]
             print(f"CVE: {cve}")
             description = cve.descriptions[0].value
-            vector = None
-            if hasattr(cve, 'cvssData') and cve.cvssData:
-                vector = getattr(cve.cvssData, 'vectorString', None)
+            if 'cvssMetricV31' in cve:
+                vector = cve['cvssMetricV31'][0]['cvssData']['vectorString']    
+            elif 'cvssMetricV3' in cve:
+                vector = cve['cvssMetricV3'][0]['cvssData']['vectorString']
+            elif 'cvssMetricV2' in cve:
+                vector = cve['cvssMetricV2'][0]['cvssData']['vectorString']
         except IndexError:
             print(f"Error: CVE {cve_id} not found.")
             return None
-        return description, vector     
-
+        return description, vector    
+    
     def classify_cve(self, description, keywords):
         doc = nlp(description.lower())
         categories_found = set()

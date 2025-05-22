@@ -1,4 +1,5 @@
 import mariadb
+import json
 
 class DatabaseManager:
     
@@ -57,7 +58,7 @@ class DatabaseManager:
         try:
             cursor = self.conn.cursor()
             query = "INSERT INTO vul_classified (ipv4, cve_id, cvss_vector, stride, linddun) VALUES (%s, %s, %s, %s, %s)"
-            cursor.execute(query, (ipv4, cve, cvss_vector, stride, linddun))
+            cursor.execute(query, (ipv4, cve, cvss_vector, json.dumps(stride), json.dumps(linddun)))
             self.conn.commit()
         except mariadb.Error as e:
             print(f"Error insertando vulnerabilidad clasificada: {e}")
