@@ -30,7 +30,7 @@ class ExternalThreatDB:
         try:
             nvdlib.read_timeout = 60
             cve = nvdlib.searchCVE(cveId=cve_id, verbose=True)[0]
-            print(f"CVE: {cve}")
+            # print(f"CVE: {cve}")
             description = cve.descriptions[0].value
             vector = None
             if 'cvssMetricV31' in cve:
