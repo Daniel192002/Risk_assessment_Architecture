@@ -47,7 +47,7 @@ class ExternalThreatDB:
             return description, vector   
         except IndexError:
             print(f"Error: CVE {cve_id} not found.")
-            return None
+            return None,None
          
     
     def classify_cve(self, description, keywords):
@@ -63,6 +63,8 @@ class ExternalThreatDB:
         classified = []
         try:
             description, vector = self.get_cve_description(cve_id)
+            print(f"Description: {description}")
+            print(f"Vector: {vector}")
             if description is None or vector is None:
                 print(f"Skipping classification for CVE {cve_id} due to missing data.")
                 classified = None
