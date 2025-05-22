@@ -32,10 +32,11 @@ class ExternalThreatDB:
             cve = nvdlib.searchCVE(cveId=cve_id, verbose=True)[0]
             print(f"CVE: {cve}")
             description = cve.descriptions[0].value
+            vector = cve.cvssData.vectorString
         except IndexError:
             print(f"Error: CVE {cve_id} not found.")
             return None
-        return description    
+        return description, vector     
 
     def classify_cve(self, description, keywords):
         doc = nlp(description.lower())
@@ -46,22 +47,20 @@ class ExternalThreatDB:
                     categories_found.add(category)
         return list(categories_found)
     
-    def classify_threats(self,cves):
+    def classify_threat(self,ipv4,cve_id):
         classified = []
-        cve_ids = cves
-        
-        for ipv4, cve_id in cve_ids:
-            try:
-                description = self.get_cve_description(cve_id)
-                stride_categorie = self.classify_cve(description, STRIDE_CATEGORIES)
-                linddun_categorie = self.classify_cve(description, LINDDUN_CATEGORIES)
-                classified.append({
-                    "ipv4": ipv4,
-                    "cve_id": cve_id,
-                    "description": description,
-                    "STRIDE": stride_categorie,
-                    "LINDDUN": linddun_categorie
-                })
-            except Exception as e:
-                print(f"Error al clasificar CVE {cve_id}: {e}")
+        try:
+            description, vector = self.get_cve_description(cve_id)
+            stride_categorie = self.classify_cve(description, STRIDE_CATEGORIES)
+            linddun_categorie = self.classify_cve(description, LINDDUN_CATEGORIES)
+            classified.append({
+                "ipv4": ipv4,
+                "cve_id": cve_id,
+                "description": description,
+                "cvss_vector": vector,
+                "STRIDE": stride_categorie,
+                "LINDDUN": linddun_categorie
+            })
+        except Exception as e:
+            print(f"Error al clasificar CVE {cve_id}: {e}")
         return classified

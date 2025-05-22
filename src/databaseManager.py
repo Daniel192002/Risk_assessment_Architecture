@@ -47,10 +47,30 @@ class DatabaseManager:
         except mariadb.Error as e:
             print(f"Error insertando vulnerabilidad: {e}")
     
+    def insert_vul_classified(self, ipv4, cve, description, cvss_vector, stride, linddun):
+        try:
+            cursor = self.conn.cursor()
+            query = "INSERT INTO classfied_vulnerabilities (ipv4, cve_id, description, cvss_vector, stride, linddun) VALUES (%s, %s, %s, %s, %s, %s)"
+            cursor.execute(query, (ipv4, cve, description, cvss_vector, stride, linddun))
+            self.conn.commit()
+        except mariadb.Error as e:
+            print(f"Error insertando vulnerabilidad clasificada: {e}")
+    
+    def get_classified_vulnerabilities(self):
+        cursor = self.conn.cursor()
+        query = "SELECT ipv4, cve_id, cvss_vector, stride, linddun FROM classfied_vulnerabilities"
+        cursor.execute(query)
+        return cursor.fetchall()
     
     def cve_exists(self, ipv4, cve):
         cursor = self.conn.cursor()
         query = "SELECT 1 FROM vulnerabilities WHERE ipv4 = %s AND cve = %s LIMIT 1"
+        cursor.execute(query, (ipv4, cve))
+        return cursor.fetchone() is not None
+    
+    def cve_classified_exists(self, ipv4, cve):
+        cursor = self.conn.cursor()
+        query = "SELECT 1 FROM classfied_vulnerabilities  WHERE ipv4 = %s AND cve_id = %s LIMIT 1"
         cursor.execute(query, (ipv4, cve))
         return cursor.fetchone() is not None
 
