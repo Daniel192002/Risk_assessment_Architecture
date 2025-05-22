@@ -25,27 +25,34 @@ LINDDUN_CATEGORIES = {
 }
 
 class ExternalThreatDB:
-    def __init__(self, api_key=None):
-        self.api_key = '5ad9e6cf-d9a1-4c51-b8cc-c9f8d096757f'
-        self.api_url = "https://services.nvd.nist.gov/rest/json/cve/2.0"
-        self.headers = {"apiKey": self.api_key, "User-Agent": "Mozilla/5.0"}
+    # def __init__(self, api_key=None):
+    #     self.api_key = '5ad9e6cf-d9a1-4c51-b8cc-c9f8d096757f'
+    #     self.api_url = "https://services.nvd.nist.gov/rest/json/cve/2.0"
+    #     self.headers = {"apiKey": self.api_key, "User-Agent": "Mozilla/5.0"}
 
     
     def get_cve_description(self, cve_id):
+        # try:
+        #     url = f"{self.api_url}?cveId={cve_id}"
+        #     response = requests.get(url, headers=self.headers)
+        #     if response.status_code == 200:
+        #         data = response.json()
+        #         descriptions = data.get("vulnerabilities", [])[0]["cve"]["descriptions"]
+        #         for desc in descriptions:
+        #             if desc["lang"] == "en":
+        #                 return desc["value"]
+        #     else:
+        #         print(f"HTTP error: {response.status_code}")
+        # except Exception as e:
+        #     print(f"Error al obtener la descripción de CVE {cve_id}: {e}")
+        # return None
         try:
-            url = f"{self.api_url}?cveId={cve_id}"
-            response = requests.get(url, headers=self.headers)
-            if response.status_code == 200:
-                data = response.json()
-                descriptions = data.get("vulnerabilities", [])[0]["cve"]["descriptions"]
-                for desc in descriptions:
-                    if desc["lang"] == "en":
-                        return desc["value"]
-            else:
-                print(f"HTTP error: {response.status_code}")
-        except Exception as e:
-            print(f"Error al obtener la descripción de CVE {cve_id}: {e}")
-        return None
+            nvdlib.read_timeout = 60
+            cve = nvdlib.searchCVE(cve_id, verbose=True)[0]
+        except IndexError:
+            print(f"Error: CVE {cve_id} not found.")
+            return None
+        return cve    
 
     def classify_cve(self, description, keywords):
         doc = nlp(description.lower())
@@ -63,15 +70,16 @@ class ExternalThreatDB:
         for ipv4, cve_id in cve_ids:
             try:
                 description = self.get_cve_description(cve_id)
-                stride_categorie = self.classify_cve(description, STRIDE_CATEGORIES)
-                linddun_categorie = self.classify_cve(description, LINDDUN_CATEGORIES)
-                classified.append({
-                    "ipv4": ipv4,
-                    "cve_id": cve_id,
-                    "description": description,
-                    "STRIDE": stride_categorie,
-                    "LINDDUN": linddun_categorie
-                })
+                print(f" CVE: {description}")
+                # stride_categorie = self.classify_cve(description, STRIDE_CATEGORIES)
+                # linddun_categorie = self.classify_cve(description, LINDDUN_CATEGORIES)
+                # classified.append({
+                #     "ipv4": ipv4,
+                #     "cve_id": cve_id,
+                #     "description": description,
+                #     "STRIDE": stride_categorie,
+                #     "LINDDUN": linddun_categorie
+                # })
             except Exception as e:
                 print(f"Error al clasificar CVE {cve_id}: {e}")
         return classified
