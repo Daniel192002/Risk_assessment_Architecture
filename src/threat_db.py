@@ -58,7 +58,6 @@ class ExternalThreatDB:
             classified.append({
                 "ipv4": ipv4,
                 "cve_id": cve_id,
-                "description": description,
                 "cvss_vector": vector,
                 "STRIDE": stride_categorie,
                 "LINDDUN": linddun_categorie
