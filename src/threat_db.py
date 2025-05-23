@@ -40,6 +40,8 @@ class ExternalThreatDB:
             # nvdlib puede devolver un objeto, adaptamos acceso:
             if hasattr(metrics, 'cvssMetricV31') and metrics.cvssMetricV31:
                 vector = metrics.cvssMetricV31[0].cvssData.vectorString
+            elif hasattr(metrics, 'cvssMetricV30') and metrics.cvssMetricV30:
+                vector = metrics.cvssMetricV30[0].cvssData.vectorString
             elif hasattr(metrics, 'cvssMetricV3') and metrics.cvssMetricV3:
                 vector = metrics.cvssMetricV3[0].cvssData.vectorString
             elif hasattr(metrics, 'cvssMetricV2') and metrics.cvssMetricV2:
