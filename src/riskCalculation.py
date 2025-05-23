@@ -149,6 +149,6 @@ class RiskCalculation:
                 linddun = []
 
         dread = self.map_cvss_to_dread(cvss_vector)
-        dread_with_weights = self.apply_stride_linddun_weights(dread, stride, linddun)
         print(f"[+] Riesgo calculado: {dread}")
+        dread_with_weights = self.apply_stride_linddun_weights(dread, stride, linddun)
         print(f"[+] Riesgo calculado ponderizado: {dread_with_weights}")
