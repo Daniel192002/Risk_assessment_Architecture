@@ -1,5 +1,5 @@
 import unittest
-from riskCalculation import RiskCalculation
+from src.riskCalculation import RiskCalculation
 
 # Suponiendo que ExternalThreatDB está en otro archivo llamado threat_module.py
 # from threat_module import ExternalThreatDB
