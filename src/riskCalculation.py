@@ -20,8 +20,24 @@ CVSS_V2_WEIGHTS = {
     'A': {'C': 1.0, 'P': 0.5, 'N': 0.0},
 }
 
+STRIDE_TO_DREAD = {
+    "Spoofing": {"Exploitability": 1, "Discoverability": 1},
+    "Tampering": {"Damage": 1.5, "Reproducibility": 0.5},
+    "Repudiation": {"Discoverability": 1},
+    "Information Disclosure": {"Damage": 1.5, "AffectedUsers": 1},
+    "Denial of Service": {"Damage": 1, "AffectedUsers": 1},
+    "Elevation of Privilege": {"Exploitability": 1.5, "Damage": 1}
+}
 
-
+LINDDUN_TO_DREAD = {
+    "Linkability": {"AffectedUsers": 1},
+    "Identifiability": {"Damage": 1.5, "AffectedUsers": 1},
+    "Non-repudiation": {"Discoverability": 1},
+    "Detectability": {"Damage": 1, "Exploitability": 0.5 },
+    "Disclosure of Information": {"Damage": 1.5, "AffectedUsers": 1, "Discoverability": 0.5},
+    "Unawareness": {"Damage": 1, "Discoverability": 1},
+    "Non-compliance": {"Damage": 1.5}
+}
 
 
 class RiskCalculation:
@@ -95,7 +111,25 @@ class RiskCalculation:
             dread["Discoverability"] = weights['AV'].get(metrics['AV'], 0.0) * 10
         
         return {k: round(v, 1) for k, v in dread.items()}
+    
+    
+    def apply_stride_linddun_weights(self, dread, stride, linddun):
+        for category in stride:
+            if category in STRIDE_TO_DREAD:
+                for key, value in STRIDE_TO_DREAD[category].items():
+                    dread[key] += value
+        for category in linddun:
+            if category in LINDDUN_TO_DREAD:
+                for key, value in LINDDUN_TO_DREAD[category].items():
+                    dread[key] += value
+        for key in dread:
+            dread[key] = min(dread[key], 10.0)
+        
+        return {k: round(v, 1) for k, v in dread.items()}
+    
     def calculate_risk(self, cvss_vector, stride, linddun):
 
         dread = self.map_cvss_to_dread(cvss_vector)
+        dread_with_weights = self.apply_stride_linddun_weights(dread, stride, linddun)
         print(f"[+] Riesgo calculado: {dread}")
+        print(f"[+] Riesgo calculado: {dread_with_weights}")
