@@ -112,7 +112,7 @@ class RiskCalculation:
         
         return {k: round(v, 1) for k, v in dread.items()}
     
-    
+    @staticmethod
     def apply_stride_linddun_weights(self, dread, stride, linddun):
         for category in stride:
             if category in STRIDE_TO_DREAD:

@@ -7,7 +7,7 @@ from riskCalculation import RiskCalculation
 # Si todo está en el mismo archivo puedes omitir la línea de import
 class TestApplyStrideLinddunWeights(unittest.TestCase):
     def test_weights_application(self):
-        etd = RiskCalculation
+        etd = RiskCalculation()
 
         dread = {
             "Damage": 5.0,
