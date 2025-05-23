@@ -117,10 +117,12 @@ class RiskCalculation:
         for category in stride:
             if category in STRIDE_TO_DREAD:
                 for key, value in STRIDE_TO_DREAD[category].items():
+                    print(f"    +{value} a {key}")
                     dread[key] += value
         for category in linddun:
             if category in LINDDUN_TO_DREAD:
                 for key, value in LINDDUN_TO_DREAD[category].items():
+                    print(f"    +{value} a {key}")
                     dread[key] += value
         for key in dread:
             dread[key] = min(dread[key], 10.0)
