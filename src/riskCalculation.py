@@ -114,13 +114,16 @@ class RiskCalculation:
     
     
     def apply_stride_linddun_weights(self, dread, stride, linddun):
-        print(f"stride: {stride}")
+        print("DEBUG - STRIDE input:", stride)
         for category in stride:
+            print("DEBUG - checking category:", category)
             if category in STRIDE_TO_DREAD:
                 for key, value in STRIDE_TO_DREAD[category].items():
                     print(f"    +{value} a {key}")
                     dread[key] += value
+        print("DEBUG - LINDDUN input:", linddun)
         for category in linddun:
+            print("DEBUG - checking category:", category)
             if category in LINDDUN_TO_DREAD:
                 for key, value in LINDDUN_TO_DREAD[category].items():
                     print(f"    +{value} a {key}")
