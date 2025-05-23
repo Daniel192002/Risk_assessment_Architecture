@@ -1,4 +1,4 @@
-
+import ast
 
 CVSS_V3_WEIGHTS = {
     'AV': {'N': 1.0, 'A': 0.8, 'L': 0.6, 'P': 0.4},
@@ -134,6 +134,19 @@ class RiskCalculation:
         return {k: round(v, 1) for k, v in dread.items()}
     
     def calculate_risk(self, cvss_vector, stride, linddun):
+        
+        if isinstance(stride, str):
+            try:
+                stride = ast.literal_eval(stride)
+            except (ValueError, SyntaxError):
+                print(f"Error al evaluar la cadena de STRIDE: {stride}")
+                stride = []
+        if isinstance(linddun, str):
+            try:
+                linddun = ast.literal_eval(linddun)
+            except (ValueError, SyntaxError):
+                print(f"Error al evaluar la cadena de LINDDUN: {linddun}")
+                linddun = []
 
         dread = self.map_cvss_to_dread(cvss_vector)
         dread_with_weights = self.apply_stride_linddun_weights(dread, stride, linddun)
