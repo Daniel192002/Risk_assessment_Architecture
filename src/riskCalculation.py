@@ -28,10 +28,6 @@ class RiskCalculation:
     """
     This class is responsible for calculating the risk of a given portfolio.
     """
-
-    def __init__(self, portfolio):
-        self.portfolio = portfolio
-        
     
     def detect_cvss_version(self, cvss_vector):
 
