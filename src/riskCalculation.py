@@ -148,7 +148,17 @@ class RiskCalculation:
                 print(f"Error al evaluar la cadena de LINDDUN: {linddun}")
                 linddun = []
 
-        dread = self.map_cvss_to_dread(cvss_vector)
-        print(f"[+] Riesgo calculado: {dread}")
+        dread_without_ponderation = self.map_cvss_to_dread(cvss_vector)
+        print(f"[+] Riesgo calculado: {dread_without_ponderation}")
         dread_with_weights = self.apply_stride_linddun_weights(dread, stride, linddun)
         print(f"[+] Riesgo calculado ponderizado: {dread_with_weights}")
+        dread = (dread_with_weights["Damage"] + 
+                 dread_with_weights["Reproducibility"] + 
+                 dread_with_weights["Exploitability"] + 
+                 dread_with_weights["AffectedUsers"] + 
+                 dread_with_weights["Discoverability"]) / 5.0
+        print(f"[+] Riesgo final: {dread}")
+        # return {
+        #     "DREAD": dread_with_weights,
+        #     "FinalRisk": round(dread, 1)
+        # }
