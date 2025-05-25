@@ -150,7 +150,7 @@ class RiskCalculation:
 
         dread_without_ponderation = self.map_cvss_to_dread(cvss_vector)
         print(f"[+] Riesgo calculado: {dread_without_ponderation}")
-        dread_with_weights = self.apply_stride_linddun_weights(dread, stride, linddun)
+        dread_with_weights = self.apply_stride_linddun_weights(dread_without_ponderation, stride, linddun)
         print(f"[+] Riesgo calculado ponderizado: {dread_with_weights}")
         dread = (dread_with_weights["Damage"] + 
                  dread_with_weights["Reproducibility"] + 
