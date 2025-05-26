@@ -157,5 +157,5 @@ class RiskCalculation:
                  dread_with_weights["Discoverability"]) / 5.0
         # print(f"[+] Riesgo final: {dread}")
         return {
-            "FinalRisk": round(dread, 1)
+            round(dread, 1)
         }
