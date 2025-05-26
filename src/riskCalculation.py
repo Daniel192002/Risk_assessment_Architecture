@@ -156,6 +156,5 @@ class RiskCalculation:
                  dread_with_weights["AffectedUsers"] + 
                  dread_with_weights["Discoverability"]) / 5.0
         # print(f"[+] Riesgo final: {dread}")
-        return {
-            round(dread, 1)
-        }
+        return  round(dread, 1)
+        
