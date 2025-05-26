@@ -51,6 +51,13 @@ class DatabaseManager:
         cursor.execute(query)
         return cursor.fetchall()
     
+    def get_vul_risk(self):
+        cursor = self.conn.cursor()
+        query = "SELECT ipv4, cve, risk FROM risk_calculated"
+        cursor.execute(query)
+        return cursor.fetchall()
+    
+    
     def insert_vulnerability(self, mac, ipv4, cve, severity):
         try:
             cursor = self.conn.cursor()
@@ -78,6 +85,15 @@ class DatabaseManager:
         except mariadb.Error as e:
             print(f"Error insertando vulnerabilidad clasificada: {e}")
     
+    def insert_risk_value(self, ipv4, cve, risk_value):
+        try:
+            cursor = self.conn.cursor()
+            query = "INSERT INTO risk_calculated (ipv4, cve, risk) VALUES (%s, %s, %s)"
+            cursor.execute(query, (ipv4, cve, risk_value))
+            self.conn.commit()
+        except mariadb.Error as e:
+            print(f"Error insertando valor de riesgo: {e}")
+    
     def cve_exists(self, ipv4, cve):
         cursor = self.conn.cursor()
         query = "SELECT 1 FROM vulnerabilities WHERE ipv4 = %s AND cve = %s LIMIT 1"
@@ -93,6 +109,12 @@ class DatabaseManager:
     def vul_risk_exists(self, ipv4, cve):
         cursor = self.conn.cursor()
         query = "SELECT 1 FROM vul_risk WHERE ipv4 = %s AND cve_id = %s LIMIT 1"
+        cursor.execute(query, (ipv4, cve))
+        return cursor.fetchone() is not None
+    
+    def vul_risk_calculated_exists(self, ipv4, cve):
+        cursor = self.conn.cursor()
+        query = "SELECT 1 FROM risk_calculated WHERE ipv4 = %s AND cve = %s LIMIT 1"
         cursor.execute(query, (ipv4, cve))
         return cursor.fetchone() is not None
 
