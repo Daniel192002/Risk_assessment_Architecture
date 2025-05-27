@@ -39,6 +39,12 @@ class DatabaseManager:
         cursor.execute(query)
         return cursor.fetchall()
     
+    def get_vulnerabilities_with_solution(self):
+        cursor = self.conn.cursor()
+        query = "SELECT ipv4, cve, nvt_name, solution FROM vulnerabilities"
+        cursor.execute(query)
+        return cursor.fetchall()
+    
     def get_classified_vulnerabilities(self):
         cursor = self.conn.cursor()
         query = "SELECT ipv4, cve_id, cvss_vector, stride, linddun FROM vul_classified"
@@ -58,11 +64,11 @@ class DatabaseManager:
         return cursor.fetchall()
     
     
-    def insert_vulnerability(self, mac, ipv4, cve, severity):
+    def insert_vulnerability(self, mac, ipv4, cve, severity,nvt_name, solution):
         try:
             cursor = self.conn.cursor()
-            query = "INSERT INTO vulnerabilities (mac, ipv4, cve, severity) VALUES (%s, %s, %s, %s)"
-            cursor.execute(query, (mac, ipv4, cve, severity))
+            query = "INSERT INTO vulnerabilities (mac, ipv4, cve, severity, nvt_name, solution) VALUES (%s, %s, %s, %s, %s, %s)"
+            cursor.execute(query, (mac, ipv4, cve, severity, nvt_name, solution))
             self.conn.commit()
         except mariadb.Error as e:
             print(f"Error insertando vulnerabilidad: {e}")
