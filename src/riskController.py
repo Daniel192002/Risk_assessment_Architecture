@@ -3,6 +3,7 @@ from asset_controller import AssetController
 from vulnerabilityScanner import VulnerabilityScanner
 from threat_db import ExternalThreatDB
 from riskCalculation import RiskCalculation
+from reportGenerator import ReportGenerator
 import  databaseManager
 import atexit
 
@@ -15,6 +16,7 @@ class RiskController:
         self.vulnerability_scanner = VulnerabilityScanner()
         self.threat_db = ExternalThreatDB()
         self.risk_calculation = RiskCalculation()
+        self.report_generator = ReportGenerator()
         self.db = databaseManager.DatabaseManager(user="root", password="tfg2025", host="127.0.0.1")
         atexit.register(self.db.close)  # Asegura que la conexión a la base de datos se cierre al salir del programa
     
@@ -77,12 +79,24 @@ class RiskController:
             else:
                 print(f"[-] Amenaza ya calculada (ignorando): {cve} en {ipv4}")
                 continue
+    
+    def generate_report(self):
+        print("[5] Generando reporte de vulnerabilidades ...")
+        report_data = self.db.get_report_information()
+        if not report_data:
+            print("No se encontraron datos para generar el reporte.")
+            return
+        else:
+            print("Datos obtenidos para el reporte:")
+            self.report_generator.generate_report(report_data)
+        
         
     def vulnerability_scan_complete(self):
             self.scan_assets()
             self.execute_vulnerability_scan()
             self.classify_vulnerabilities()
             self.calculate_risk()
+            self.generate_report()
     
     def show_menu(self):
         print("\n====== MENÚ DE ANÁLISIS DE VULNERABILIDADES ======")
@@ -109,7 +123,8 @@ class RiskController:
             elif choice == "4":
                 self.calculate_risk()
             elif choice == "5":
-                print("Generando reporte (funcionalidad no implementada)")
+                print("Generando reporte...")
+                self.generate_report()
             elif choice == "6":
                 self.vulnerability_scan_complete()
             elif choice == "0":

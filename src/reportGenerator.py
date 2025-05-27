@@ -1,0 +1,66 @@
+
+import csv
+import xml.etree.ElementTree as ET
+from collections import defaultdict
+
+class ReportGenerator:
+    def __init__(self, report_data):
+        self.report_data = report_data
+
+    def generate_report(self):
+        print("\n¿En qué formato deseas generar el informe de vulnerabilidades?")
+        print("1. CSV")
+        print("2. XML")
+        print("3. Ambos")
+        print("0. Cancelar")
+        
+        choice = input("Seleccione una opción: ")
+        if choice == "1":
+            self.generate_csv_report()
+        elif choice == "2":
+            self.generate_xml_report()
+        elif choice == "3":
+            self.generate_csv_report()
+            self.generate_xml_report()
+        elif choice == "0":
+            print("Operación cancelada.")
+        else:
+            print("Opción no válida, por favor intente de nuevo.")
+    def generate_csv_report(self):
+        
+        filename = "vulnerability_report.csv"
+        with open(filename, mode='w', newline='', encoding="utf-8") as file:
+            writer = csv.writer(file)
+            writer.writerow(["MAC", "IPv4", "IPv6", "CVE", "NVT Name", "STRIDE", "LINDDUN", "Risk", "Solution"])
+            for row in self.report_data:
+                writer.writerow(row)
+        print(f"[✓] Informe CSV generado: {filename}")
+    
+    def generate_xml_report(self):
+        
+        print("[DEBUG] Generando informe XML...")
+        filename = "vulnerability_report.xml"
+        devices = defaultdict(list)
+        for mac, ipv4, ipv6, cve, nvt, stride, linddun, risk, solucion in self.report_data:
+            key = (mac, ipv4, ipv6)
+            devices[key].append((cve, nvt, stride, linddun, risk, solucion))
+        
+        root = ET.Element("Devices")
+        for (mac, ipv4, ipv6), vulnerabilities in devices.items():
+            device_elem = ET.SubElement(root, "Device")
+            ET.SubElement(device_elem, "MAC").text = mac
+            ET.SubElement(device_elem, "IPv4").text = ipv4
+            ET.SubElement(device_elem, "IPv6").text = ipv6
+            
+            for cve, nvt, stride, linddun, risk, solucion in vulnerabilities:
+                vulnerability_elem = ET.SubElement(device_elem, "Vulnerability")
+                ET.SubElement(vulnerability_elem, "CVE").text = cve
+                ET.SubElement(vulnerability_elem, "NVT_Name").text = nvt
+                ET.SubElement(vulnerability_elem, "STRIDE").text = stride
+                ET.SubElement(vulnerability_elem, "LINDDUN").text = linddun
+                ET.SubElement(vulnerability_elem, "Risk").text = risk
+                ET.SubElement(vulnerability_elem, "Solution").text = solucion
+        tree = ET.ElementTree(root)
+        tree.write(filename, encoding="utf-8", xml_declaration=True)
+        print(f"[✓] Informe XML generado: {filename}")
+
