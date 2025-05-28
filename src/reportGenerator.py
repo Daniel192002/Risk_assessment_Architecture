@@ -4,10 +4,8 @@ import xml.etree.ElementTree as ET
 from collections import defaultdict
 
 class ReportGenerator:
-    def __init__(self, report_data):
-        self.report_data = report_data
-
-    def generate_report(self):
+       
+    def generate_report(self, report_data):
         print("\n¿En qué formato deseas generar el informe de vulnerabilidades?")
         print("1. CSV")
         print("2. XML")
@@ -16,32 +14,32 @@ class ReportGenerator:
         
         choice = input("Seleccione una opción: ")
         if choice == "1":
-            self.generate_csv_report()
+            self.generate_csv_report(report_data)
         elif choice == "2":
-            self.generate_xml_report()
+            self.generate_xml_report(report_data)
         elif choice == "3":
-            self.generate_csv_report()
-            self.generate_xml_report()
+            self.generate_csv_report(report_data)
+            self.generate_xml_report(report_data)
         elif choice == "0":
             print("Operación cancelada.")
         else:
             print("Opción no válida, por favor intente de nuevo.")
-    def generate_csv_report(self):
+    def generate_csv_report(self, report_data):
         
         filename = "vulnerability_report.csv"
         with open(filename, mode='w', newline='', encoding="utf-8") as file:
             writer = csv.writer(file)
             writer.writerow(["MAC", "IPv4", "IPv6", "CVE", "NVT Name", "STRIDE", "LINDDUN", "Risk", "Solution"])
-            for row in self.report_data:
+            for row in report_data:
                 writer.writerow(row)
         print(f"[✓] Informe CSV generado: {filename}")
     
-    def generate_xml_report(self):
+    def generate_xml_report(self, report_data):
         
         print("[DEBUG] Generando informe XML...")
         filename = "vulnerability_report.xml"
         devices = defaultdict(list)
-        for mac, ipv4, ipv6, cve, nvt, stride, linddun, risk, solucion in self.report_data:
+        for mac, ipv4, ipv6, cve, nvt, stride, linddun, risk, solucion in report_data:
             key = (mac, ipv4, ipv6)
             devices[key].append((cve, nvt, stride, linddun, risk, solucion))
         
