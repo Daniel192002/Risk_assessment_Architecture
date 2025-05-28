@@ -36,6 +36,7 @@ class ReportGenerator:
 
             for row in sorted_data:
                 # Limpiar STRIDE y LINDDUN si son listas como string
+                row = list(row)
                 row[5] = ", ".join(eval(row[5])) if row[5].startswith("[") else row[5]
                 row[6] = ", ".join(eval(row[6])) if row[6].startswith("[") else row[6]
                 writer.writerow(row)
