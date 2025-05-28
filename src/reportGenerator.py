@@ -30,8 +30,16 @@ class ReportGenerator:
         with open(filename, mode='w', newline='', encoding="utf-8") as file:
             writer = csv.writer(file)
             writer.writerow(["MAC", "IPv4", "IPv6", "CVE", "NVT Name", "STRIDE", "LINDDUN", "Risk", "Solution"])
-            for row in report_data:
+            
+            # Ordenar por nivel de riesgo (asumiendo que Risk está en la posición 7)
+            sorted_data = sorted(report_data, key=lambda x: float(x[7]), reverse=True)
+
+            for row in sorted_data:
+                # Limpiar STRIDE y LINDDUN si son listas como string
+                row[5] = ", ".join(eval(row[5])) if row[5].startswith("[") else row[5]
+                row[6] = ", ".join(eval(row[6])) if row[6].startswith("[") else row[6]
                 writer.writerow(row)
+
         print(f"[✓] Informe CSV generado: {filename}")
     
     def generate_xml_report(self, report_data):
