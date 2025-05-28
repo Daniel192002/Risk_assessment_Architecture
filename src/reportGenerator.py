@@ -32,7 +32,7 @@ class ReportGenerator:
             writer.writerow(["MAC", "IPv4", "IPv6", "CVE", "NVT Name", "STRIDE", "LINDDUN", "Risk", "Solution"])
             
             # Ordenar por nivel de riesgo (asumiendo que Risk está en la posición 7)
-            sorted_data = sorted(report_data, key=lambda x: float(x[7]), reverse=True)
+            sorted_data = sorted(report_data, key=lambda x: float(x[7]) if x[7] is not None else 0.0, reverse=True)
 
             for row in sorted_data:
                 # Limpiar STRIDE y LINDDUN si son listas como string
