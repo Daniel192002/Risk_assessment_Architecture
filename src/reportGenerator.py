@@ -56,25 +56,48 @@ class ReportGenerator:
         print("[DEBUG] Generando informe XML...")
         filename = "vulnerability_report.xml"
         devices = defaultdict(list)
+
         for mac, ipv4, ipv6, cve, nvt, stride, linddun, risk, solucion in report_data:
             key = (mac, ipv4, ipv6)
             devices[key].append((cve, nvt, stride, linddun, risk, solucion))
         
         root = ET.Element("Devices")
+
         for (mac, ipv4, ipv6), vulnerabilities in devices.items():
             device_elem = ET.SubElement(root, "Device")
-            ET.SubElement(device_elem, "MAC").text = mac
-            ET.SubElement(device_elem, "IPv4").text = ipv4
-            ET.SubElement(device_elem, "IPv6").text = ipv6
+            ET.SubElement(device_elem, "MAC").text = str(mac)
+            ET.SubElement(device_elem, "IPv4").text = str(ipv4)
+            ET.SubElement(device_elem, "IPv6").text = str(ipv6)
             
             for cve, nvt, stride, linddun, risk, solucion in vulnerabilities:
                 vulnerability_elem = ET.SubElement(device_elem, "Vulnerability")
-                ET.SubElement(vulnerability_elem, "CVE").text = cve
-                ET.SubElement(vulnerability_elem, "NVT_Name").text = nvt
-                ET.SubElement(vulnerability_elem, "STRIDE").text = stride
-                ET.SubElement(vulnerability_elem, "LINDDUN").text = linddun
-                ET.SubElement(vulnerability_elem, "Risk").text = risk
-                ET.SubElement(vulnerability_elem, "Solution").text = solucion
+                ET.SubElement(vulnerability_elem, "CVE").text = str(cve)
+                ET.SubElement(vulnerability_elem, "NVT_Name").text = str(nvt)
+
+                # Limpiar STRIDE y LINDDUN si vienen como string tipo lista
+                stride_str = ""
+                if isinstance(stride, str) and stride.startswith("["):
+                    try:
+                        stride_str = ", ".join(ast.literal_eval(stride))
+                    except:
+                        stride_str = stride
+                else:
+                    stride_str = str(stride)
+                ET.SubElement(vulnerability_elem, "STRIDE").text = stride_str
+
+                linddun_str = ""
+                if isinstance(linddun, str) and linddun.startswith("["):
+                    try:
+                        linddun_str = ", ".join(ast.literal_eval(linddun))
+                    except:
+                        linddun_str = linddun
+                else:
+                    linddun_str = str(linddun)
+                ET.SubElement(vulnerability_elem, "LINDDUN").text = linddun_str
+
+                ET.SubElement(vulnerability_elem, "Risk").text = str(risk) if risk is not None else "0"
+                ET.SubElement(vulnerability_elem, "Solution").text = str(solucion)
+
         tree = ET.ElementTree(root)
         tree.write(filename, encoding="utf-8", xml_declaration=True)
         print(f"[✓] Informe XML generado: {filename}")
