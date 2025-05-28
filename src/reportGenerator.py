@@ -1,6 +1,7 @@
 
 import csv
 import xml.etree.ElementTree as ET
+import ast
 from collections import defaultdict
 
 class ReportGenerator:
@@ -35,12 +36,19 @@ class ReportGenerator:
             sorted_data = sorted(report_data, key=lambda x: float(x[7]) if x[7] is not None else 0.0, reverse=True)
 
             for row in sorted_data:
-                # Limpiar STRIDE y LINDDUN si son listas como string
-                row = list(row)
-                row[5] = ", ".join(eval(row[5])) if row[5].startswith("[") else row[5]
-                row[6] = ", ".join(eval(row[6])) if row[6].startswith("[") else row[6]
+                row = list(row)  # Convert tuple to list for mutability
+                
+                if isinstance(row[5], str) and row[5].startswith("["):
+                    try:
+                        row[5] = ", ".join(ast.literal_eval(row[5]))
+                    except Exception:
+                        pass
+                if isinstance(row[6], str) and row[6].startswith("["):
+                    try:
+                        row[6] = ", ".join(ast.literal_eval(row[6]))
+                    except Exception:
+                        pass
                 writer.writerow(row)
-
         print(f"[✓] Informe CSV generado: {filename}")
     
     def generate_xml_report(self, report_data):
