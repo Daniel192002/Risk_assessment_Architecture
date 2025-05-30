@@ -90,11 +90,11 @@ class DatabaseManager:
         except mariadb.Error as e:
             print(f"Error insertando vulnerabilidad clasificada: {e}")
     
-    def insert_risk_value(self, ipv4, cve, risk_value):
+    def insert_risk_value(self, ipv4, cve, risk_value, severity):
         try:
             cursor = self.conn.cursor()
-            query = "INSERT INTO risk_calculated (ipv4, cve, risk) VALUES (%s, %s, %s)"
-            cursor.execute(query, (ipv4, cve, risk_value))
+            query = "INSERT INTO risk_calculated (ipv4, cve, risk, severity) VALUES (%s, %s, %s, %s)"
+            cursor.execute(query, (ipv4, cve, risk_value, severity))
             self.conn.commit()
         except mariadb.Error as e:
             print(f"Error insertando valor de riesgo: {e}")

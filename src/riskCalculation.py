@@ -150,11 +150,20 @@ class RiskCalculation:
         # print(f"[+] Riesgo calculado: {dread_without_ponderation}")
         dread_with_weights = self.apply_stride_linddun_weights(dread_without_ponderation, stride, linddun)
         # print(f"[+] Riesgo calculado ponderizado: {dread_with_weights}")
+        severity = None
         dread = (dread_with_weights["Damage"] + 
                  dread_with_weights["Reproducibility"] + 
                  dread_with_weights["Exploitability"] + 
                  dread_with_weights["AffectedUsers"] + 
                  dread_with_weights["Discoverability"]) / 5.0
+        if dread >= 0 or dread < 5.0:
+            severity = "Bajo"
+        elif dread >= 5.0 and dread < 7.0:
+            severity = "Medio"
+        elif dread >= 7.0 and dread < 9.0:
+            severity = "Alto"
+        elif dread >= 9.0:
+            severity = "Crítico"
         # print(f"[+] Riesgo final: {dread}")
-        return  round(dread, 1)
+        return  round(dread, 1),severity
         

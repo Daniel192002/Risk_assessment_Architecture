@@ -73,9 +73,9 @@ class RiskController:
         cves_classified = self.db.get_classified_vulnerabilities()
         for ipv4, cve, cvss_vector, stride, linddun in cves_classified:
             if not self.db.vul_risk_calculated_exists(ipv4, cve):
-                risk = self.risk_calculation.calculate_risk(cvss_vector, stride, linddun)
-                self.db.insert_risk_value(ipv4, cve, risk)
-                print(f"[+] Riesgo calculado: {risk} para {ipv4} - {cve}")
+                risk, severity = self.risk_calculation.calculate_risk(cvss_vector, stride, linddun)
+                self.db.insert_risk_value(ipv4, cve, risk, severity)
+                print(f"[+] Riesgo calculado: {risk}, con severidad {severity} para {ipv4} - {cve}")
             else:
                 print(f"[-] Amenaza ya calculada (ignorando): {cve} en {ipv4}")
                 continue
