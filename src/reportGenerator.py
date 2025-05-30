@@ -62,9 +62,9 @@ class ReportGenerator:
         filename = "vulnerability_report.xml"
         devices = defaultdict(list)
 
-        for mac, ipv4, ipv6, cve, nvt, stride, linddun, risk, solucion in report_data:
+        for mac, ipv4, ipv6, cve, nvt, stride, linddun, risk, severity, solucion in report_data:
             key = (mac, ipv4, ipv6)
-            devices[key].append((cve, nvt, stride, linddun, risk, solucion))
+            devices[key].append((cve, nvt, stride, linddun, risk, severity, solucion))
         
         root = ET.Element("Devices")
 
