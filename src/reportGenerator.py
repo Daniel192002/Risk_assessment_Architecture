@@ -34,7 +34,7 @@ class ReportGenerator:
         
         filename = "vulnerability_report.csv"
         with open(filename, mode='w', newline='', encoding="utf-8") as file:
-            writer = csv.writer(file)
+            writer = csv.writer(file, delimiter=';')
             writer.writerow(["MAC", "IPv4", "IPv6", "CVE", "NVT Name", "STRIDE", "LINDDUN", "Risk", "severity", "Solution"])
             
             # # Ordenar por nivel de riesgo (asumiendo que Risk está en la posición 7)
