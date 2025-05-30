@@ -59,7 +59,7 @@ class DatabaseManager:
     
     def get_report_information(self):
         cursor = self.conn.cursor()
-        query = "SELECT a.mac, a.ipv4, a.ipv6, v.cve, v.nvt_name, vc.stride, vc.linddun, rc.risk, v.solution FROM assets a JOIN vulnerabilities v ON a.ipv4 = v.ipv4 LEFT JOIN vul_classified vc ON v.ipv4 = vc.ipv4 AND v.cve = vc.cve_id LEFT JOIN risk_calculated rc ON v.ipv4 = rc.ipv4 AND v.cve = rc.cve ORDER BY a.mac, v.cve;"
+        query = "SELECT a.mac, a.ipv4, a.ipv6, v.cve, v.nvt_name, vc.stride, vc.linddun, rc.risk, rc.severity, v.solution FROM assets a JOIN vulnerabilities v ON a.ipv4 = v.ipv4 LEFT JOIN vul_classified vc ON v.ipv4 = vc.ipv4 AND v.cve = vc.cve_id LEFT JOIN risk_calculated rc ON v.ipv4 = rc.ipv4 AND v.cve = rc.cve ORDER BY a.mac, v.cve;"
         cursor.execute(query)
         return cursor.fetchall()
     
