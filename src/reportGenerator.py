@@ -34,11 +34,11 @@ class ReportGenerator:
         
         filename = "vulnerability_report.csv"
         with open(filename, mode='w', newline='', encoding="utf-8") as file:
-            writer = csv.writer(file, delimiter=';')
+            writer = csv.writer(file, delimiter=';', quoting=csv.QUOTE_ALL)
             writer.writerow(["MAC", "IPv4", "IPv6", "CVE", "NVT Name", "STRIDE", "LINDDUN", "Risk", "severity", "Solution"])
             
             # Ordenar por nivel de riesgo (asumiendo que Risk está en la posición 7)
-            sorted_data = sorted(report_data, key=lambda x: float(x[7]) if x[7] is not None else 0.0, reverse=True)
+            sorted_data = sorted(report_data, key=lambda x: float(x[7]) if x[7] is not None and str(x[7]).replace('.', '', 1).isdigit() else 0.0, reverse=True)
 
             for row in sorted_data:
                 row = list(row)  # Convert tuple to list for mutability
