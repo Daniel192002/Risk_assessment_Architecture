@@ -163,7 +163,7 @@ class RiskCalculation:
         elif dread >= 7.0 and dread < 9.0:
             severity = "Alto"
         elif dread >= 9.0:
-            severity = "Crítico"
+            severity = "CrItico"
         # print(f"[+] Riesgo final: {dread}")
         return  round(dread, 1),severity
         
