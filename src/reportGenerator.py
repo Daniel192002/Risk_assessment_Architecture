@@ -15,9 +15,9 @@ class ReportGenerator:
         
         choice = input("Seleccione una opción: ")
         if choice == "1":
-            self.generate_csv_report(report_data)
+            self.generate_csv_report()
         elif choice == "2":
-            self.generate_xml_report(report_data)
+            self.generate_xml_report()
         elif choice == "3":
             self.generate_csv_report(report_data)
             self.generate_xml_report(report_data)
@@ -25,31 +25,38 @@ class ReportGenerator:
             print("Operación cancelada.")
         else:
             print("Opción no válida, por favor intente de nuevo.")
-    def generate_csv_report(self, report_data):
+    # def generate_csv_report(self, report_data):
         
-        filename = "vulnerability_report.csv"
-        with open(filename, mode='w', newline='', encoding="utf-8") as file:
-            writer = csv.writer(file)
-            writer.writerow(["MAC", "IPv4", "IPv6", "CVE", "NVT Name", "STRIDE", "LINDDUN", "Risk", "Solution"])
+    #     filename = "vulnerability_report.csv"
+    #     with open(filename, mode='w', newline='', encoding="utf-8") as file:
+    #         writer = csv.writer(file)
+    #         writer.writerow(["MAC", "IPv4", "IPv6", "CVE", "NVT Name", "STRIDE", "LINDDUN", "Risk", "Solution"])
             
-            # Ordenar por nivel de riesgo (asumiendo que Risk está en la posición 7)
-            sorted_data = sorted(report_data, key=lambda x: float(x[7]) if x[7] is not None else 0.0, reverse=True)
+    #         # Ordenar por nivel de riesgo (asumiendo que Risk está en la posición 7)
+    #         sorted_data = sorted(report_data, key=lambda x: float(x[7]) if x[7] is not None else 0.0, reverse=True)
 
-            for row in sorted_data:
-                row = list(row)  # Convert tuple to list for mutability
+    #         for row in sorted_data:
+    #             row = list(row)  # Convert tuple to list for mutability
                 
-                if isinstance(row[5], str) and row[5].startswith("["):
-                    try:
-                        row[5] = ", ".join(ast.literal_eval(row[5]))
-                    except Exception:
-                        pass
-                if isinstance(row[6], str) and row[6].startswith("["):
-                    try:
-                        row[6] = ", ".join(ast.literal_eval(row[6]))
-                    except Exception:
-                        pass
-                writer.writerow(row)
-        print(f"[✓] Informe CSV generado: {filename}")
+    #             if isinstance(row[5], str) and row[5].startswith("["):
+    #                 try:
+    #                     row[5] = ", ".join(ast.literal_eval(row[5]))
+    #                 except Exception:
+    #                     pass
+    #             if isinstance(row[6], str) and row[6].startswith("["):
+    #                 try:
+    #                     row[6] = ", ".join(ast.literal_eval(row[6]))
+    #                 except Exception:
+    #                     pass
+    #             writer.writerow(row)
+    #     print(f"[✓] Informe CSV generado: {filename}")
+    
+    def generate_csv_report(self):
+        with open("vulnerability_report.csv", mode='w', newline='', encoding="utf-8") as file:
+            escritor = csv.writer(file, delimiter=';')
+            escritor.writerow(['Encabezado 1', 'Encabezado 2', 'Encabezado 3'])
+            escritor.writerow(['Dato 1', 'Dato 2', 'Dato 3'])
+            escritor.writerow(['Dato 4', 'Dato 5', 'Dato 6'])
     
     def generate_xml_report(self, report_data):
         
