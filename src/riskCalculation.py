@@ -156,7 +156,7 @@ class RiskCalculation:
                  dread_with_weights["Exploitability"] + 
                  dread_with_weights["AffectedUsers"] + 
                  dread_with_weights["Discoverability"]) / 5.0
-        if dread >= 0 or dread < 5.0:
+        if dread == 0.0 or dread < 5.0:
             severity = "Bajo"
         elif dread >= 5.0 and dread < 7.0:
             severity = "Medio"
