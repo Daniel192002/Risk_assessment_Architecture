@@ -37,23 +37,23 @@ class ReportGenerator:
             writer = csv.writer(file, delimiter=';')
             writer.writerow(["MAC", "IPv4", "IPv6", "CVE", "NVT Name", "STRIDE", "LINDDUN", "Risk", "severity", "Solution"])
             
-            # # Ordenar por nivel de riesgo (asumiendo que Risk está en la posición 7)
-            # sorted_data = sorted(report_data, key=lambda x: float(x[7]) if x[7] is not None else 0.0, reverse=True)
+            # Ordenar por nivel de riesgo (asumiendo que Risk está en la posición 7)
+            sorted_data = sorted(report_data, key=lambda x: float(x[7]) if x[7] is not None else 0.0, reverse=True)
 
-            # for row in sorted_data:
-            #     row = list(row)  # Convert tuple to list for mutability
+            for row in sorted_data:
+                row = list(row)  # Convert tuple to list for mutability
                 
-            #     if isinstance(row[5], str) and row[5].startswith("["):
-            #         try:
-            #             row[5] = ", ".join(ast.literal_eval(row[5]))
-            #         except Exception:
-            #             pass
-            #     if isinstance(row[6], str) and row[6].startswith("["):
-            #         try:
-            #             row[6] = ", ".join(ast.literal_eval(row[6]))
-            #         except Exception:
-            #             pass
-            #     writer.writerow(row)
+                if isinstance(row[5], str) and row[5].startswith("["):
+                    try:
+                        row[5] = ", ".join(ast.literal_eval(row[5]))
+                    except Exception:
+                        pass
+                if isinstance(row[6], str) and row[6].startswith("["):
+                    try:
+                        row[6] = ", ".join(ast.literal_eval(row[6]))
+                    except Exception:
+                        pass
+                writer.writerow(row)
         print(f"[✓] Informe CSV generado: {filename}")
     
     def generate_xml_report(self, report_data):
