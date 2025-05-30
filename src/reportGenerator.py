@@ -141,3 +141,16 @@ class ReportGenerator:
             json.dump(json_output, f, indent=4, ensure_ascii=False)
 
         print(f"[✓] Informe JSON generado: {filename}")
+    
+    def _clean_list_field(self, field):
+        if isinstance(field, str) and field.startswith("["):
+            try:
+                return ast.literal_eval(field)
+            except:
+                return [field]
+        elif isinstance(field, list):
+            return field
+        elif field is None:
+            return []
+        else:
+            return [str(field)]
