@@ -6,6 +6,7 @@ from riskCalculation import RiskCalculation
 from reportGenerator import ReportGenerator
 import  databaseManager
 import atexit
+import psutil
 
 
 INTERFAZ = "eth1"
@@ -20,18 +21,45 @@ class RiskController:
         self.db = databaseManager.DatabaseManager(user="root", password="tfg2025", host="127.0.0.1")
         atexit.register(self.db.close)  # Asegura que la conexión a la base de datos se cierre al salir del programa
     
+    def get_all_network_interfaces(self):
+        
+        interfaces = []
+        for interface, addrs in psutil.net_if_addrs().items():
+            if interface != "lo":
+                interfaces.append(interface)
+        return interfaces
+    
     def scan_assets(self):
+        
         print("[1] Escaneando dispositivos en la red ...")
-        devices = self.asset_controller.scan_network(INTERFAZ)
+        
+        interfaces_to_scan = self.get_all_network_interfaces()
+        if not interfaces_to_scan:
+            print("[!] No se encontraron interfaces de red disponibles.")
+            return
+        print(f"[+] Escaneando en las siguientes interfaces: {', '.join(interfaces_to_scan)}")
+        
+        all_detected_devices = {}
+        for interface in interfaces_to_scan:
+            print(f"[+] Escaneando en la interfaz: {interface}")
+            devices = self.asset_controller.scan_network(interface)
+            all_detected_devices.update(devices)
         existing_devices = self.db.get_devices()
-        for mac, addrs in devices.items():
-            ipv4 = addrs["IPv4"]
-            ipv6 = addrs["IPv6"]
-            if (mac, ipv4, ipv6) not in existing_devices:
+        for mac, addrs in all_detected_devices.items():
+            ipv4 = addrs.get("IPv4")
+            ipv6 = addrs.get("IPv6")
+            
+            device_exists_in_db = False
+            for db_mac, db_ipv4, db_ipv6 in existing_devices:
+                if db_mac == mac and (db_ipv4 == ipv4 or db_ipv6 == ipv6):
+                    device_exists_in_db = True
+                    break
+            if not device_exists_in_db:
                 self.db.insert_device(mac, ipv4, ipv6)
                 print(f"[+] Dispositivo nuevo detectado: {mac} - IPv4: {ipv4} - IPv6: {ipv6}")
             else:
                 print(f"[-] Dispositivo ya existente (ignorando): {mac} - IPv4: {ipv4} - IPv6: {ipv6}")
+        
     def execute_vulnerability_scan(self):
         print("[2] Escaneando vulnerabilidades de los dispositivos ...")
         existing_devices = self.db.get_devices()
