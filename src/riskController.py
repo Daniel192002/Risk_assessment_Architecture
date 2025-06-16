@@ -1,7 +1,7 @@
 
 from asset_detector import AssetDetector
 from vulnerabilityScanner import VulnerabilityScanner
-from threat_db import ExternalThreatDB
+from threatClassifier import ThreatClassifier
 from riskCalculation import RiskCalculation
 from reportGenerator import ReportGenerator
 import  databaseManager
@@ -15,7 +15,7 @@ class RiskController:
     def __init__(self):
         self.asset_detector = AssetDetector()
         self.vulnerability_scanner = VulnerabilityScanner()
-        self.threat_db = ExternalThreatDB()
+        self.threat_db = ThreatClassifier()
         self.risk_calculation = RiskCalculation()
         self.report_generator = ReportGenerator()
         self.db = databaseManager.DatabaseManager(user="root", password="tfg2025", host="127.0.0.1")

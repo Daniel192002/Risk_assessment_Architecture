@@ -24,7 +24,7 @@ LINDDUN_CATEGORIES = {
     "Non-compliance": ["non-compliance", "regulation", "gdpr", "policy"]
 }
 
-class ExternalThreatDB:
+class ThreatClassifier:
     
     def get_cve_description(self, cve_id):
         try:
