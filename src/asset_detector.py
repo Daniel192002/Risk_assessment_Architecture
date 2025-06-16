@@ -55,15 +55,15 @@ class AssetDetector:
 
         # Escaneo IPv4 con Bettercap
         print("[+] Escaneando direcciones IPv4...")
-        ipv4_output = AssetController.execute_bettercap(interface)
-        ipv4_devices = AssetController.extract_ipv4_devices(ipv4_output)
+        ipv4_output = AssetDetector.execute_bettercap(interface)
+        ipv4_devices = AssetDetector.extract_ipv4_devices(ipv4_output)
 
         # Escaneo IPv6 con ip -6 neigh show
         print("[+] Escaneando direcciones IPv6...")
-        ipv6_output = AssetController.execute_command("ip -6 neigh show")
+        ipv6_output = AssetDetector.execute_command("ip -6 neigh show")
         print("\n[DEBUG] Salida de IPv6:")
         print(ipv6_output)
-        ipv6_devices = AssetController.extract_ipv6_devices(ipv6_output)
+        ipv6_devices = AssetDetector.extract_ipv6_devices(ipv6_output)
 
         # Unir resultados basados en la MAC
         active_devices = {}
