@@ -1,5 +1,5 @@
 
-from asset_controller import AssetController
+from asset_detector import AssetDetector
 from vulnerabilityScanner import VulnerabilityScanner
 from threat_db import ExternalThreatDB
 from riskCalculation import RiskCalculation
@@ -13,7 +13,7 @@ INTERFAZ = "eth1"
 
 class RiskController:
     def __init__(self):
-        self.asset_controller = AssetController()
+        self.asset_detector = AssetDetector()
         self.vulnerability_scanner = VulnerabilityScanner()
         self.threat_db = ExternalThreatDB()
         self.risk_calculation = RiskCalculation()
@@ -42,7 +42,7 @@ class RiskController:
         all_detected_devices = {}
         for interface in interfaces_to_scan:
             print(f"[+] Escaneando en la interfaz: {interface}")
-            devices = self.asset_controller.scan_network(interface)
+            devices = self.asset_detector.scan_network(interface)
             all_detected_devices.update(devices)
         existing_devices = self.db.get_devices()
         for mac, addrs in all_detected_devices.items():

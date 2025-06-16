@@ -3,7 +3,7 @@ import re
 import time
 import databaseManager
 
-class AssetController:
+class AssetDetector:
     @staticmethod
     def execute_bettercap(interface):
         """Ejecuta Bettercap para obtener direcciones IPv4 y MACs."""
