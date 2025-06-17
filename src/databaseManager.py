@@ -17,112 +17,33 @@ class DatabaseManager:
             print(f"Error conectando a MariaDB: {e}")
             self.conn = None
     
-    def insert_device(self, mac, ipv4, ipv6):
-        try:
-            self.cursor.execute(
-                "INSERT INTO assets (mac, ipv4, ipv6) VALUES (?, ?, ?)",
-                (mac, ipv4, ipv6)
-            )
-            self.conn.commit()
-        except mariadb.Error as e:
-             print(f"Error insertando datos: {e}")
-    
-    def get_devices(self):
-        cursor = self.conn.cursor()
-        query = "SELECT mac, ipv4, ipv6 FROM assets"
-        cursor.execute(query)
-        return cursor.fetchall()
-    
-    def get_vulnerabilities(self):
-        cursor = self.conn.cursor()
-        query = "SELECT ipv4, cve FROM vulnerabilities"
-        cursor.execute(query)
-        return cursor.fetchall()
-        
-    def get_classified_vulnerabilities(self):
-        cursor = self.conn.cursor()
-        query = "SELECT ipv4, cve_id, cvss_vector, stride, linddun FROM vul_classified"
-        cursor.execute(query)
-        return cursor.fetchall()
-    
-    def get_vul_risk(self):
-        cursor = self.conn.cursor()
-        query = "SELECT ipv4, cve_id, risk FROM vul_risk"
-        cursor.execute(query)
-        return cursor.fetchall()
-    
-    def get_vul_risk(self):
-        cursor = self.conn.cursor()
-        query = "SELECT ipv4, cve, risk FROM risk_calculated"
-        cursor.execute(query)
-        return cursor.fetchall()
-    
-    def get_report_information(self):
-        cursor = self.conn.cursor()
-        query = "SELECT a.mac, a.ipv4, a.ipv6, v.cve, v.nvt_name, vc.stride, vc.linddun, rc.risk, rc.severity, v.solution FROM assets a JOIN vulnerabilities v ON a.ipv4 = v.ipv4 LEFT JOIN vul_classified vc ON v.ipv4 = vc.ipv4 AND v.cve = vc.cve_id LEFT JOIN risk_calculated rc ON v.ipv4 = rc.ipv4 AND v.cve = rc.cve ORDER BY a.mac, v.cve;"
-        cursor.execute(query)
-        return cursor.fetchall()
-    
-    def insert_vulnerability(self, mac, ipv4, cve, severity,nvt_name, solution):
+    def execute_query(self, query, params=None, fetch_one=False):
+        if not self.conn or not self.conn.is_connected():
+            print("No hay conexión a la base de datos.")
+            return None
+        cursor = None
         try:
             cursor = self.conn.cursor()
-            query = "INSERT INTO vulnerabilities (mac, ipv4, cve, severity, nvt_name, solution) VALUES (%s, %s, %s, %s, %s, %s)"
-            cursor.execute(query, (mac, ipv4, cve, severity, nvt_name, solution))
-            self.conn.commit()
+            cursor.execute(query, params)
+
+            # Detectar si es una operación de escritura para hacer commit
+            if query.strip().upper().startswith(("INSERT", "UPDATE", "DELETE")):
+                self.conn.commit()
+                return cursor.rowcount # Retorna el número de filas afectadas
+            else: # Operación de lectura (SELECT)
+                if fetch_one:
+                    return cursor.fetchone()
+                return cursor.fetchall()
         except mariadb.Error as e:
-            print(f"Error insertando vulnerabilidad: {e}")
-    
-    def insert_vul_classified(self, ipv4, cve, cvss_vector, stride, linddun):
-        try:
-            cursor = self.conn.cursor()
-            query = "INSERT INTO vul_classified (ipv4, cve_id, cvss_vector, stride, linddun) VALUES (%s, %s, %s, %s, %s)"
-            cursor.execute(query, (ipv4, cve, cvss_vector, json.dumps(stride), json.dumps(linddun)))
-            self.conn.commit()
-        except mariadb.Error as e:
-            print(f"Error insertando vulnerabilidad clasificada: {e}")
-    
-    def insert_vul_risk(self, ipv4, cve, risk):
-        try:
-            cursor = self.conn.cursor()
-            query = "INSERT INTO vul_risk (ipv4, cve_id, risk) VALUES (%s, %s, %s)"
-            cursor.execute(query, (ipv4, cve, risk))
-            self.conn.commit()
-        except mariadb.Error as e:
-            print(f"Error insertando vulnerabilidad clasificada: {e}")
-    
-    def insert_risk_value(self, ipv4, cve, risk_value, severity):
-        try:
-            cursor = self.conn.cursor()
-            query = "INSERT INTO risk_calculated (ipv4, cve, risk, severity) VALUES (%s, %s, %s, %s)"
-            cursor.execute(query, (ipv4, cve, risk_value, severity))
-            self.conn.commit()
-        except mariadb.Error as e:
-            print(f"Error insertando valor de riesgo: {e}")
-    
-    def cve_exists(self, ipv4, cve):
-        cursor = self.conn.cursor()
-        query = "SELECT 1 FROM vulnerabilities WHERE ipv4 = %s AND cve = %s LIMIT 1"
-        cursor.execute(query, (ipv4, cve))
-        return cursor.fetchone() is not None
-    
-    def cve_classified_exists(self, ipv4, cve):
-        cursor = self.conn.cursor()
-        query = "SELECT 1 FROM vul_classified WHERE ipv4 = %s AND cve_id = %s LIMIT 1"
-        cursor.execute(query, (ipv4, cve))
-        return cursor.fetchone() is not None
-    
-    def vul_risk_exists(self, ipv4, cve):
-        cursor = self.conn.cursor()
-        query = "SELECT 1 FROM vul_risk WHERE ipv4 = %s AND cve_id = %s LIMIT 1"
-        cursor.execute(query, (ipv4, cve))
-        return cursor.fetchone() is not None
-    
-    def vul_risk_calculated_exists(self, ipv4, cve):
-        cursor = self.conn.cursor()
-        query = "SELECT 1 FROM risk_calculated WHERE ipv4 = %s AND cve = %s LIMIT 1"
-        cursor.execute(query, (ipv4, cve))
-        return cursor.fetchone() is not None
+            print(f"DatabaseManager: Error ejecutando consulta '{query}' con params {params}: {e}")
+            self.conn.rollback() # Deshacer cambios en caso de error
+            raise # Re-lanzar la excepción para que los repositorios la manejen
+        finally:
+            if cursor:
+                cursor.close() # Es buena práctica cerrar el cursor después de cada operación
+
 
     def close(self):
-        if self.conn:
+        if self.conn and self.conn.is_connected():
             self.conn.close()
+            print("DatabaseManager: Conexión a la base de datos cerrada.")
