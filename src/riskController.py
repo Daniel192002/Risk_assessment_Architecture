@@ -49,35 +49,6 @@ class RiskController:
 
     def execute_vulnerability_scan(self):
         print("[2] Escaneando vulnerabilidades de los dispositivos ...")
-        # El VulnerabilityScanner ahora maneja su propia persistencia.
-        # Para que el VulnerabilityScanner sepa qué IPs escanear, el RiskController DEBE DÁRSELOS.
-        # Aquí es donde necesitarías el AssetRepository para obtener la lista de dispositivos.
-        # ¡OJO! Esto revela una limitación: si el RiskController no tiene los repositorios,
-        # ¿cómo le pasa la lista de IPs al VulnerabilityScanner?
-
-        # SOLUCIÓN: El RiskController obtiene los datos para el flujo, pero no los persiste.
-        # Necesita una forma de obtener "todos los dispositivos existentes" sin tener el repo.
-        # Esto podría ser un método en AssetDetector que devuelva una lista de IPs que luego
-        # RiskController le pasa a VulnerabilityScanner.
-        # Alternativa: Que AssetDetector y VulnerabilityScanner se pasen la información directamente.
-
-        # Para mantener el RiskController "limpio" de repositorios,
-        # vamos a asumir que los módulos tienen alguna forma de obtener la información que necesitan.
-        # Por ahora, el AssetDetector y VulnerabilityScanner no necesitan una lista explícita
-        # de IPs/MACs del RiskController para iniciar sus procesos.
-        # Más tarde, podríamos refinar esto para que los módulos tengan métodos como
-        # `get_all_scannable_ips()` que luego se pasen.
-
-        # Para que VulnerabilityScanner escanee lo que AssetDetector encontró:
-        # Una forma es que AssetDetector devuelva la lista de IPs que guardó, y RiskController
-        # se la pase a VulnerabilityScanner. O, AssetDetector guarda y VulnerabilityScanner
-        # consulta los datos existentes (lo que implicaría un repo en VulnerabilityScanner).
-        
-        # Opción 1: VulnerabilityScanner consulta los activos del repo. (Mi propuesta actual).
-        # Esto significa que AssetDetector *guarda*, y VulnerabilityScanner *lee* lo que se guardó.
-        # Entonces, VulnerabilityScanner necesita AssetRepository para saber qué escanear.
-        # ¡Corrijo esto en el VulnerabilityScanner!
-
         # El RiskController SOLO LLAMA A LOS MÓDULOS DE NEGOCIO:
         self.vulnerability_scanner.execute_scan() # El VulnerabilityScanner se encarga de todo lo suyo.
         print("[+] Escaneo de vulnerabilidades completado y datos guardados por VulnerabilityScanner.")
