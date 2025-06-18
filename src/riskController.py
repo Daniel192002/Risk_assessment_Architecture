@@ -1,43 +1,32 @@
-# risk_controller.py (Modificado)
+# risk_controller.py
+# Importar SOLO los módulos de lógica de negocio, NO los repositorios directamente aquí
 from asset_detector import AssetDetector
 from vulnerabilityScanner import VulnerabilityScanner
 from threatClassifier import ThreatClassifier
 from riskCalculation import RiskCalculation
 from reportGenerator import ReportGenerator
 
-# Importar los nuevos repositorios
-from assetRepository import AssetRepository
-from vulnerabilityRepository import VulnerabilityRepository
-from reportRepository import ReportRepository
-
-import psutil # Mantenemos psutil aquí, ya que es para la lógica de red, no de DB
+import psutil # Todavía necesario para get_all_network_interfaces
 
 class RiskController:
+    # El constructor ahora solo recibe los módulos de negocio.
     def __init__(self,
                  asset_detector: AssetDetector,
                  vulnerability_scanner: VulnerabilityScanner,
                  threat_classifier: ThreatClassifier,
                  risk_calculation: RiskCalculation,
-                 report_generator: ReportGenerator,
-                 asset_repository: AssetRepository,
-                 vulnerability_repository: VulnerabilityRepository,
-                 report_repository: ReportRepository
+                 report_generator: ReportGenerator
                  ):
-        # Módulos de lógica de negocio
         self.asset_detector = asset_detector
         self.vulnerability_scanner = vulnerability_scanner
         self.threat_classifier = threat_classifier
         self.risk_calculation = risk_calculation
         self.report_generator = report_generator
 
-        # Repositorios para persistencia (inyectados)
-        self.asset_repo = asset_repository
-        self.vuln_repo = vulnerability_repository
-        self.report_repo = report_repository
-
-        # ¡ self.db y atexit.register(self.db.close) YA NO ESTÁN AQUÍ !
+        # ¡ self.asset_repo, self.vuln_repo, self.report_repo YA NO ESTÁN AQUÍ !
 
     def get_all_network_interfaces(self):
+        # ... (Método auxiliar, no cambia)
         interfaces = []
         for interface, addrs in psutil.net_if_addrs().items():
             if interface != "lo":
@@ -52,87 +41,63 @@ class RiskController:
             return
         print(f"[+] Escaneando en las siguientes interfaces: {', '.join(interfaces_to_scan)}")
 
-        all_detected_devices = {}
+        # El AssetDetector ahora maneja su propia persistencia.
+        # RiskController solo le dice "escanea y encárgate".
         for interface in interfaces_to_scan:
-            print(f"[+] Escaneando en la interfaz: {interface}")
-            devices = self.asset_detector.scan_network(interface)
-            all_detected_devices.update(devices)
-
-        existing_devices = self.asset_repo.get_all_devices() # Usamos el AssetRepository
-        # Convertir a un set para búsquedas eficientes (si tus tuplas de DB son hashable)
-        existing_devices_set = set([(d[0], d[1], d[2]) for d in existing_devices])
-
-        for mac, addrs in all_detected_devices.items():
-            ipv4 = addrs.get("IPv4")
-            ipv6 = addrs.get("IPv6")
-
-            # Ahora la comprobación de existencia puede usar el set o un método del repo
-            if (mac, ipv4, ipv6) not in existing_devices_set:
-            # O podrías usar: if not self.asset_repo.device_exists(mac, ipv4, ipv6):
-                self.asset_repo.insert_device(mac, ipv4, ipv6) # Usamos el AssetRepository
-                print(f"[+] Dispositivo nuevo detectado: {mac} - IPv4: {ipv4} - IPv6: {ipv6}")
-            else:
-                print(f"[-] Dispositivo ya existente (ignorando): {mac} - IPv4: {ipv4} - IPv6: {ipv6}")
+            self.asset_detector.scan_network(interface) # El AssetDetector guarda los datos
+        print("[+] Escaneo de activos completado y datos guardados por AssetDetector.")
 
     def execute_vulnerability_scan(self):
         print("[2] Escaneando vulnerabilidades de los dispositivos ...")
-        existing_devices = self.asset_repo.get_all_devices() # Usamos el AssetRepository
-        for device in existing_devices:
-            mac = device[0]
-            ip = device[1]
-            if ip:
-                cves = self.vulnerability_scanner.scan(ip)
-                print(f"[+] CVES: {cves}")
-                for cve, severity, nvt_name, solution in cves:
-                    # Usamos el VulnerabilityRepository
-                    if not self.vuln_repo.cve_exists(ip, cve):
-                        self.vuln_repo.insert_vulnerability(mac, ip, cve, severity, nvt_name, solution)
-                        print(f"[+] Vulnerabilidad detectada: {cve} en {ip}")
-                    else:
-                        print(f"[-] Vulnerabilidad ya registrada (ignorando): {cve} en {ip}")
+        # El VulnerabilityScanner ahora maneja su propia persistencia.
+        # Para que el VulnerabilityScanner sepa qué IPs escanear, el RiskController DEBE DÁRSELOS.
+        # Aquí es donde necesitarías el AssetRepository para obtener la lista de dispositivos.
+        # ¡OJO! Esto revela una limitación: si el RiskController no tiene los repositorios,
+        # ¿cómo le pasa la lista de IPs al VulnerabilityScanner?
+
+        # SOLUCIÓN: El RiskController obtiene los datos para el flujo, pero no los persiste.
+        # Necesita una forma de obtener "todos los dispositivos existentes" sin tener el repo.
+        # Esto podría ser un método en AssetDetector que devuelva una lista de IPs que luego
+        # RiskController le pasa a VulnerabilityScanner.
+        # Alternativa: Que AssetDetector y VulnerabilityScanner se pasen la información directamente.
+
+        # Para mantener el RiskController "limpio" de repositorios,
+        # vamos a asumir que los módulos tienen alguna forma de obtener la información que necesitan.
+        # Por ahora, el AssetDetector y VulnerabilityScanner no necesitan una lista explícita
+        # de IPs/MACs del RiskController para iniciar sus procesos.
+        # Más tarde, podríamos refinar esto para que los módulos tengan métodos como
+        # `get_all_scannable_ips()` que luego se pasen.
+
+        # Para que VulnerabilityScanner escanee lo que AssetDetector encontró:
+        # Una forma es que AssetDetector devuelva la lista de IPs que guardó, y RiskController
+        # se la pase a VulnerabilityScanner. O, AssetDetector guarda y VulnerabilityScanner
+        # consulta los datos existentes (lo que implicaría un repo en VulnerabilityScanner).
+        
+        # Opción 1: VulnerabilityScanner consulta los activos del repo. (Mi propuesta actual).
+        # Esto significa que AssetDetector *guarda*, y VulnerabilityScanner *lee* lo que se guardó.
+        # Entonces, VulnerabilityScanner necesita AssetRepository para saber qué escanear.
+        # ¡Corrijo esto en el VulnerabilityScanner!
+
+        # El RiskController SOLO LLAMA A LOS MÓDULOS DE NEGOCIO:
+        self.vulnerability_scanner.execute_scan() # El VulnerabilityScanner se encarga de todo lo suyo.
+        print("[+] Escaneo de vulnerabilidades completado y datos guardados por VulnerabilityScanner.")
 
     def classify_vulnerabilities(self):
         print("[3] Clasificando vulnerabilidades ...")
-        cves = self.vuln_repo.get_all_vulnerabilities() # Usamos el VulnerabilityRepository
-        for ipv4, cve in cves:
-            # Usamos el VulnerabilityRepository
-            if not self.vuln_repo.cve_classified_exists(ipv4, cve):
-                thread_classified = self.threat_classifier.classify_threat(ipv4, cve)
-                if thread_classified is None: # Usar 'is None' en lugar de '== None'
-                    continue
-                else:
-                    thread = thread_classified[0]
-                    cvss_vector = thread["cvss_vector"]
-                    stride = thread["STRIDE"]
-                    linddun = thread["LINDDUN"]
-                    self.vuln_repo.insert_vul_classified(ipv4, cve, cvss_vector, stride, linddun) # Usamos el VulnerabilityRepository
-                    print(f"[+] Amenazas clasificadas: {thread_classified}")
-            else:
-                print(f"[-] Amenaza ya clasificada (ignorando): {cve} en {ipv4}")
-                continue
+        # threat_classifier.classify_threats() (un nuevo método en ThreatClassifier que orqueste su lógica y persistencia)
+        self.threat_classifier.classify_all_vulnerabilities() # Nuevo método
+        print("[+] Clasificación de vulnerabilidades completada y datos guardados por ThreatClassifier.")
 
     def calculate_risk(self):
         print("[4] Calculando riesgo de las vulnerabilidades ...")
-        cves_classified = self.vuln_repo.get_classified_vulnerabilities() # Usamos el VulnerabilityRepository
-        for ipv4, cve, cvss_vector, stride, linddun in cves_classified:
-            # Usamos el VulnerabilityRepository
-            if not self.vuln_repo.vul_risk_calculated_exists(ipv4, cve):
-                risk, severity = self.risk_calculation.calculate_risk(cvss_vector, stride, linddun)
-                self.vuln_repo.insert_risk_value(ipv4, cve, risk, severity) # Usamos el VulnerabilityRepository
-                print(f"[+] Riesgo calculado: {risk}, con severidad {severity} para {ipv4} - {cve}")
-            else:
-                print(f"[-] Amenaza ya calculada (ignorando): {cve} en {ipv4}")
-                continue
+        # risk_calculation.calculate_all_risks() (un nuevo método en RiskCalculation)
+        self.risk_calculation.calculate_all_risks() # Nuevo método
+        print("[+] Cálculo de riesgo completado y datos guardados por RiskCalculation.")
 
     def generate_report(self):
         print("[5] Generando reporte de vulnerabilidades ...")
-        report_data = self.report_repo.get_report_information() # Usamos el ReportRepository
-        if not report_data:
-            print("No se encontraron datos para generar el reporte.")
-            return
-        else:
-            print("Datos obtenidos para el reporte:")
-            self.report_generator.generate_report(report_data)
+        self.report_generator.generate_full_report() # Nuevo método que se encarga de todo
+        print("[+] Reporte generado con éxito.")
 
     def vulnerability_scan_complete(self):
         self.scan_assets()
@@ -142,7 +107,7 @@ class RiskController:
         self.generate_report()
 
     def show_menu(self):
-        # ... (código existente)
+        # ... (método show_menu no cambia)
         print("\n====== MENÚ DE ANÁLISIS DE VULNERABILIDADES ======")
         print("1. Escanear activos")
         print("2. Analizar vulnerabilidades")
