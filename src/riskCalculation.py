@@ -7,7 +7,7 @@ from riskRepository import RiskRepository   # Para guardar y verificar los riesg
 CVSS_V3_WEIGHTS = {
     'AV': {'N': 1.0, 'A': 0.8, 'L': 0.6, 'P': 0.4},
     'AC': {'L': 1.0, 'H': 0.5},
-    'PR': {'N': 1.0, 'L': 0.6, 'H': 0.2},
+    'PR': {'N': 1.0, 'L': 0.6, 'H': 0.3},
     'UI': {'N': 1.0, 'R': 0.5},
     'S': {'U': 1.0, 'C': 1.2},
     'C': {'H': 1.0, 'L': 0.5, 'N': 0.0},
