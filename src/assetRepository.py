@@ -3,6 +3,7 @@ from databaseManager import DatabaseManager
 class AssetRepository:
     def __init__(self, db_manager: DatabaseManager):
         self.db = db_manager # Recibe la instancia de DatabaseManager
+        print(f"AssetRepository inicializado. Instancia de DatabaseManager: {self.db}")
 
     def get_all_devices(self):
         query = "SELECT mac, ipv4, ipv6 FROM assets"

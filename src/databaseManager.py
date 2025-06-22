@@ -20,7 +20,7 @@ class DatabaseManager:
     def execute_query(self, query, params=None, fetch_one=False):
         if not self.conn is None:
             print("No hay conexión a la base de datos.")
-            return [] if not fetch_one else None
+            return None
         cursor = None
         try:
             cursor = self.conn.cursor()
