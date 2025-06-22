@@ -46,7 +46,7 @@ if __name__ == "__main__":
     # Si AssetDetector solo detecta y el Controller luego inserta, esta línea es correcta.
     # Si AssetDetector inserta directamente, necesitaría el asset_repo aquí. Revisa tu AssetDetector.py.
     # Basado en tu AssetDetector.py que tiene un constructor que acepta asset_repository, debería ser así:
-    asset_detector_instance = AssetDetector(asset_repository=asset_repo)
+    asset_detector_instance = AssetDetector(assetRepository=asset_repo)
 
     # VulnerabilityScanner necesita AssetRepository para obtener IPs y VulnerabilityRepository para guardar vulns
     vulnerability_scanner_instance = VulnerabilityScanner(
