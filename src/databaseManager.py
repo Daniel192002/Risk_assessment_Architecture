@@ -2,9 +2,10 @@ import mariadb
 import json
 
 class DatabaseManager:
-    
+
     def __init__(self, host="localhost", user="root", password="", database="identified_assets"):
         self.conn = None # Inicializa a None
+        print(f"DatabaseManager: Intentando conectar a MariaDB en {host} con usuario {user} y DB {database}...") # Debug
         try:
             self.conn = mariadb.connect(
                 user = user,
@@ -13,25 +14,20 @@ class DatabaseManager:
                 port = 3306,
                 database = database
             )
-            # Ya no crees self.cursor aquí. Créalo dentro de execute_query.
-            # self.cursor = self.conn.cursor() 
-            print("DatabaseManager: ¡Conexión establecida exitosamente!") # Mensaje de depuración
+            print("DatabaseManager: ¡Conexión establecida exitosamente!") # Debug
         except mariadb.Error as e:
-            print(f"DatabaseManager: ERROR al conectar a MariaDB: {e}")
+            print(f"DatabaseManager: ERROR al conectar a MariaDB: {e}") # Debug
             self.conn = None # Asegura que sea None si falla la conexión inicial
-    
+
     def execute_query(self, query, params=None, fetch_one=False):
-        # LA CORRECCIÓN ESTÁ AQUÍ:
         if self.conn is None: # Si self.conn ES None, entonces no hay conexión
-            print("DatabaseManager: Error: No hay conexión a la base de datos para ejecutar la consulta.")
+            print("DatabaseManager: Error: No hay conexión a la base de datos para ejecutar la consulta.") # Debug
             return [] if not fetch_one else None # Devolver [] para SELECTs que esperarían iterables
-        
-        # Elimina self.conn.is_connected() de aquí también. La librería mariadb no lo tiene.
-        # Además, el ping() se usaría aquí si quieres verificar que la conexión sigue viva
+
         try:
             self.conn.ping(reconnect=True) # Intenta un ping para asegurar que la conexión está viva y reconecta si es posible
         except mariadb.Error as e:
-            print(f"DatabaseManager: Conexión perdida o inactiva durante ping: {e}. Por favor, verifique el servidor de la base de datos.")
+            print(f"DatabaseManager: Conexión perdida o inactiva durante ping: {e}. Por favor, verifique el servidor de la base de datos.") # Debug
             return [] if not fetch_one else None
 
 
@@ -49,7 +45,7 @@ class DatabaseManager:
                     return cursor.fetchone()
                 return cursor.fetchall()
         except mariadb.Error as e:
-            print(f"DatabaseManager: Error ejecutando consulta '{query}' con params {params}: {e}")
+            print(f"DatabaseManager: Error ejecutando consulta '{query}' con params {params}: {e}") # Debug
             self.conn.rollback() # Deshacer cambios en caso de error
             return [] if not fetch_one else None # Devolver [] para SELECTs que esperarían iterables
         finally:
@@ -58,14 +54,13 @@ class DatabaseManager:
 
 
     def close(self):
-        # También corrige el close para eliminar el is_connected()
         if self.conn: # Si self.conn NO ES None (es decir, hay un objeto de conexión)
             try:
                 self.conn.close()
-                print("DatabaseManager: Conexión a la base de datos cerrada.")
+                print("DatabaseManager: Conexión a la base de datos cerrada.") # Debug
             except mariadb.Error as e:
-                print(f"DatabaseManager: Error al cerrar la conexión: {e}")
+                print(f"DatabaseManager: Error al cerrar la conexión: {e}") # Debug
             except Exception as e:
-                print(f"DatabaseManager: Error inesperado al cerrar la conexión: {e}")
+                print(f"DatabaseManager: Error inesperado al cerrar la conexión: {e}") # Debug
         else:
-            print("DatabaseManager: No hay conexión a la base de datos para cerrar.")
+            print("DatabaseManager: No hay conexión a la base de datos para cerrar.") # Debug
