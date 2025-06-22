@@ -19,7 +19,7 @@ class AssetDetector:
             # Comando modificado para ser más robusto y silenciar salida no deseada
             command = f"sudo bettercap -iface {interface} -eval 'net.recon on; sleep 5; net.show; net.recon off; exit'"
             process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, bufsize=1)
-            output, _ = process.communicate(timeout=30) # Añadir un timeout para evitar bloqueos
+            output, _ = process.communicate() # Añadir un timeout para evitar bloqueos
             if process.returncode != 0:
                 print(f"Error: Bettercap exited with code {process.returncode}")
                 # Considera loggear o lanzar una excepción más específica
