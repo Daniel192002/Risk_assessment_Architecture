@@ -37,7 +37,7 @@ class DatabaseManager:
         except mariadb.Error as e:
             print(f"DatabaseManager: Error ejecutando consulta '{query}' con params {params}: {e}")
             self.conn.rollback() # Deshacer cambios en caso de error
-            raise # Re-lanzar la excepción para que los repositorios la manejen
+            return [] if not fetch_one else None
         finally:
             if cursor:
                 cursor.close() # Es buena práctica cerrar el cursor después de cada operación
