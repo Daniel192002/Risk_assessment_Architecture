@@ -61,6 +61,7 @@ class AssetDetector:
         ipv4_mac_pattern = re.compile(r"(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\s+.*?(\([0-9A-Fa-f:]{17}\))")
         for line in output.split("\n"):
             match = ipv4_mac_pattern.search(line)
+            print(f"[DEBUG] Línea de salida de Bettercap: {line}")  # Descomentar para depurar la salida cruda
             if match:
                 # Group 1 is IP, Group 2 is MAC (with parentheses, remove them)
                 devices.add((match.group(1), match.group(2).strip('()')))
