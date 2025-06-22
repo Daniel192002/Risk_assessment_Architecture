@@ -58,7 +58,7 @@ class AssetDetector:
         # Patrón mejorado para capturar la MAC que suele estar cerca de la IP en bettercap
         # o en líneas adyacentes si net.show no la pone en la misma línea
         # Este patrón asume que la MAC está en la misma línea que la IP, lo cual es común con 'net.show'
-        ipv4_mac_pattern = re.compile(r"(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\s+.*?(\([0-9A-Fa-f:]{17}\))")
+        ipv4_mac_pattern = re.compile(r"│\s*(\d{1,3}(?:\.\d{1,3}){3})\s*│\s*([0-9a-fA-F:]{17})\s*│")
         for line in output.split("\n"):
             match = ipv4_mac_pattern.search(line)
             print(f"[DEBUG] Línea de salida de Bettercap: {line}")  # Descomentar para depurar la salida cruda
