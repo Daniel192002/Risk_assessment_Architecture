@@ -26,7 +26,7 @@ if __name__ == "__main__":
 
     # --- 1. Inicializar la única instancia del DatabaseManager ---
     # Aquí se configura la conexión a la base de datos
-    db_manager = DatabaseManager(user="root", password="tfg2025", host="127.0.0.1", database="identified_assets")
+    db_manager = DatabaseManager(user="root", password="tfg2025", host="127.0.0.1")
     
     # Asegurarse de que la conexión se cierre limpiamente al finalizar el programa
     atexit.register(db_manager.close)
