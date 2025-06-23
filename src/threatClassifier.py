@@ -41,43 +41,61 @@ class ThreatClassifier:
         self.threat_repo = threat_repository     # Para manejar las vulnerabilidades clasificadas
         nvdlib.read_timeout = 60 # Configurar timeout para nvdlib una vez
 
-    def get_cve_description(self, cve_id):
+    def get_cve_description(self, cve_id, fallback_description=None):
         """
-        Obtiene la descripción y el vector CVSS de un CVE desde NVD.
-        Retorna (description, cvss_vector) o (None, None) en caso de error.
+        Busca la descripción y vector CVSS para un CVE. Si falla, intenta usar una descripción dada.
         """
         try:
+            if cve_id.startswith("NOCVE-"):
+                raise ValueError("CVE ID no válido, usar búsqueda por descripción.")
+
             cve_results = nvdlib.searchCVE(cveId=cve_id, verbose=False)
             
             if not cve_results:
                 print(f"[!] ThreatClassifier: CVE {cve_id} no encontrado en NVD.")
-                return None, None
-            
+                raise ValueError("CVE no encontrado")
+
             cve = cve_results[0]
-            
             description = cve.descriptions[0].value if cve.descriptions else None
-            if not description:
-                print(f"[!] ThreatClassifier: No se encontró descripción para CVE {cve_id}.")
-                return None, None
-            
             vector = "N/A"
             metrics = getattr(cve, 'metrics', {})
-            
+
             if hasattr(metrics, 'cvssMetricV31') and metrics.cvssMetricV31:
                 vector = metrics.cvssMetricV31[0].cvssData.vectorString
             elif hasattr(metrics, 'cvssMetricV30') and metrics.cvssMetricV30:
                 vector = metrics.cvssMetricV30[0].cvssData.vectorString
             elif hasattr(metrics, 'cvssMetricV2') and metrics.cvssMetricV2:
                 vector = metrics.cvssMetricV2[0].cvssData.vectorString
-                
-            return description, vector   
-        except IndexError:
-            print(f"[!] ThreatClassifier: CVE {cve_id} no encontrado o estructura inesperada de NVD.")
+
+            return description, vector
+
+        except Exception:
+            # Intentar búsqueda por descripción si se proporcionó
+            if fallback_description:
+                print(f"[!] Intentando búsqueda en NVD por descripción: '{fallback_description[:50]}...'")
+                try:
+                    keyword_results = nvdlib.searchCVE(keywordSearch=fallback_description, limit=1, verbose=False)
+                    if keyword_results:
+                        cve = keyword_results[0]
+                        description = cve.descriptions[0].value if cve.descriptions else fallback_description
+                        vector = "N/A"
+                        metrics = getattr(cve, 'metrics', {})
+
+                        if hasattr(metrics, 'cvssMetricV31') and metrics.cvssMetricV31:
+                            vector = metrics.cvssMetricV31[0].cvssData.vectorString
+                        elif hasattr(metrics, 'cvssMetricV30') and metrics.cvssMetricV30:
+                            vector = metrics.cvssMetricV30[0].cvssData.vectorString
+                        elif hasattr(metrics, 'cvssMetricV2') and metrics.cvssMetricV2:
+                            vector = metrics.cvssMetricV2[0].cvssData.vectorString
+                        
+                        print(f"[✓] Encontrado CVE por texto: {cve.id}")
+                        return description, vector
+                except Exception as e:
+                    print(f"[!] Error al buscar por descripción: {e}")
+
+            print(f"[!] ThreatClassifier: No se pudo obtener descripción para {cve_id}.")
             return None, None
-        except Exception as e:
-            print(f"[!] ThreatClassifier: Error al obtener descripción/vector para CVE {cve_id}: {e}")
-            return None, None
-         
+
     
     def classify_cve_text(self, description: str, categories_map: dict):
         """
