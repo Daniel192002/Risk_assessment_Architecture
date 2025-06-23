@@ -42,22 +42,23 @@ class ReportGenerator:
             # Nota: Asegúrate de que los campos 'stride' y 'linddun' sean strings JSON en la DB
             # y los métodos de generación de informes los manejarán con ast.literal_eval
             # o json.loads si fueran necesarios como listas Python.
-            cve_id = row[3] if row[3] else f"NOCVE-{row[1]}"  # Usa IP como identificador único
+            cve_id = row[3] if row[3] else f"NOCVE-{row[4]}"  # Usa IP como identificador único
 
-            # Seleccionar severidad:
-            # - Si hay CVE, usar severidad final (row[11])
-            # - Si no hay CVE, usar severidad de NVT (row[5])
-            severity = row[11] if row[3] else row[5]
+            final_severity = row[11] if row[3] else row[5]  # row[11] = rc.severity, row[5] = v.severity
+
+            # Si no hay CVE, usar un riesgo genérico (si rc.risk también fuera NULL)
+            final_risk = row[10] if row[10] is not None else 0.0
             processed_row = (
                 row[0], # MAC
                 row[1], # IPv4
                 row[2], # IPv6
+                cve_id, # CVE (usando IP como fallback si no hay CVE)
                 row[3], # CVE
                 row[4], # NVT Name
                 row[8], # STRIDE (vc.stride)
                 row[9], # LINDDUN (vc.linddun)
-                row[10], # Risk (rc.risk)
-                row[11], # Severity (rc.severity - la final)
+                final_risk,  # Risk (rc.risk)
+                final_severity,  # Severity (rc.severity o v.severity)
                 row[6]  # Solution (v.solution)
             )
             processed_report_data.append(processed_row)
