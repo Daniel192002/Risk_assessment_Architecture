@@ -17,3 +17,4 @@ class ReportRepository:
         LEFT JOIN risk_calculated rc ON v.ipv4 = rc.ipv4 AND v.cve = rc.cve
         ORDER BY a.mac, v.cve;
         """
+        return self.db.execute_query(query)
