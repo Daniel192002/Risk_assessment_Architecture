@@ -12,7 +12,7 @@ class ReportGenerator:
     def __init__(self, report_repository: ReportRepository):
         self.report_repo = report_repository
        
-    def generate_all_reports_with_user_interaction(self):
+    def generate_full_report(self):
         """
         Orquesta la generación de informes, incluyendo la interacción con el usuario
         para seleccionar el formato y la obtención de datos del repositorio.
