@@ -41,7 +41,7 @@ class ThreatClassifier:
         self.threat_repo = threat_repository     # Para manejar las vulnerabilidades clasificadas
         nvdlib.read_timeout = 60 # Configurar timeout para nvdlib una vez
 
-       def get_cve_description(self, cve_id):
+    def get_cve_description(self, cve_id):
         """
         Obtiene la descripción y el vector CVSS de un CVE desde NVD.
         Retorna (description, cvss_vector) o (None, None) en caso de error.
