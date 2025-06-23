@@ -53,7 +53,6 @@ class ReportGenerator:
                 row[1], # IPv4
                 row[2], # IPv6
                 cve_id, # CVE (usando IP como fallback si no hay CVE)
-                row[3], # CVE
                 row[4], # NVT Name
                 row[8], # STRIDE (vc.stride)
                 row[9], # LINDDUN (vc.linddun)
