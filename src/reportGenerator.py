@@ -47,7 +47,7 @@ class ReportGenerator:
             final_severity = row[11] if row[3] else row[5]  # row[11] = rc.severity, row[5] = v.severity
 
             # Si no hay CVE, usar un riesgo genérico (si rc.risk también fuera NULL)
-            final_risk = row[10] if row[10] is not None else 0.0
+            final_risk = row[10] if row[10] is not None else row[5]
             processed_row = (
                 row[0], # MAC
                 row[1], # IPv4
