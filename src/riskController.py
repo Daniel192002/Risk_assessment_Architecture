@@ -1,12 +1,11 @@
 # risk_controller.py
-# Importar SOLO los módulos de lógica de negocio, NO los repositorios directamente aquí
 from asset_detector import AssetDetector
 from vulnerabilityScanner import VulnerabilityScanner
 from threatClassifier import ThreatClassifier
 from riskCalculation import RiskCalculation
 from reportGenerator import ReportGenerator
 
-import psutil # Todavía necesario para get_all_network_interfaces
+import psutil 
 
 class RiskController:
     # El constructor ahora solo recibe los módulos de negocio.
